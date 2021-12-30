@@ -7,15 +7,10 @@ class Help(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases=['clear', 'delete'])
-    async def purge(self, ctx, amount=10):
-        amount = amount + 1
-        await ctx.channel.purge(limit=amount)
-
     @commands.command()
-    async def help(ctx):
+    async def help(self, ctx):
         embed = discord.Embed(description="**Moderating**\n> '?kick'\n> '?ban'\n> '?purge'")
-        
+        await ctx.send(embed=embed)
 
     
 
