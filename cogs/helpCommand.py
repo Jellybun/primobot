@@ -3,7 +3,7 @@ from discord.ext import commands
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
-class Help(commands.Cog):
+class Helpcommand(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -15,4 +15,4 @@ class Help(commands.Cog):
     
 
 def setup(client):
-    client.add_cog(Help(client))
+    client.add_cog(Helpcommand(client))
