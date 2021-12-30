@@ -8,6 +8,7 @@ from discord.ext import commands, tasks
 userBlackList = []
 
 client = commands.Bot(command_prefix = "?", activity=discord.Game("?help"), intents = discord.Intents.all())
+client.remove_command('help')
 
 def get_apod():
     response = requests.get("https://api.nasa.gov/planetary/apod?api_key=FHlnYmh56cpv8KVLOdW8k2mCdKhAYT47A6XEKZCG")
