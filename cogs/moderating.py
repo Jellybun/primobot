@@ -15,7 +15,7 @@ class Moderating(commands.Cog):
     @commands.command()
     async def kick(self, ctx, member : discord.Member=None, *, reason = None):
         if member is None and reason is None:
-            ctx.send("Please specify a member!")
+            await ctx.send("Please specify a member!")
             return
         embed = discord.Embed(description=f"Kicked a user {member.name}!")
         await member.kick(reason = reason)
@@ -25,7 +25,7 @@ class Moderating(commands.Cog):
     @commands.command()
     async def ban(self, ctx, member : discord.Member=None, *, reason = None):
         if member is None and reason is None:
-            ctx.send("Please specify a member!")
+            await ctx.send("Please specify a member!")
             return
         await member.ban(reason = reason)
         embed = discord.Embed(description=f"Banned a user {member.name}!")
