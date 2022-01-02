@@ -36,22 +36,22 @@ class Clientprofile(commands.Cog):
             await ctx.send("Please indicate the activity type\n`watch`, `listen`, `play`, `compet`, `stream`")
             return
         elif arg == 'watch':
-            await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=text))
+            await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "watch", "text": text}}
             collectionStatus.update_one(profile, status)
         elif arg == 'listen':
-            await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
+            await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "listen", "text": text}}
             collectionStatus.update_one(profile, status)
         elif arg == 'play':
-            await commands.change_presence(activity=discord.Game(name=text))
+            await self.client.change_presence(activity=discord.Game(name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "play", "text": text}}
             collectionStatus.update_one(profile, status)
         elif arg == 'compet':
-            await commands.change_presence(activity = discord.Activity(type=discord.ActivityType.competing, name=text))
+            await self.client.change_presence(activity = discord.Activity(type=discord.ActivityType.competing, name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "compet", "text": text}}
             collectionStatus.update_one(profile, status)
@@ -67,7 +67,7 @@ class Clientprofile(commands.Cog):
                 profile = collectionStatus.find_one({"guild": "primoverse"})
                 status = {"$set": {"status": "stream", "text": text, "url": message.content}}
                 collectionStatus.update_one(profile, status)
-                await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=message.content)) 
+                await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=message.content)) 
         await ctx.send(f"Changed the bot presence status as **{arg}ing {text}**!")
 
 def setup(client):
