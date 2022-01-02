@@ -9,7 +9,7 @@ class Helpcommand(commands.Cog):
 
     @commands.command()
     async def help(self, ctx):
-        embed = discord.Embed(description="**Moderating**\n> '?kick'\n> '?ban'\n> '?purge'")
+        embed = discord.Embed(description="**Moderating**\n> `?kick`\n> `?ban`\n> `?purge`")
         await ctx.send(embed=embed)
 
     

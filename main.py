@@ -4,8 +4,21 @@ import os
 import datetime
 import asyncio
 import requests
+import pymongo
 from discord.ext import commands, tasks
 userBlackList = []
+
+client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+db = client_user['Discord']
+collectionPrefix = db['Prefix']
+
+def get_prefix(client, message):
+  if message.channel == message.author.dm_channel:
+    return "?"
+  else:
+    server = collectionPrefix.find_one({"guild": str(message.guild.id)})
+    prefix = server["prefix"]
+    return prefix, "?"   
 
 client = commands.Bot(command_prefix = "?", activity=discord.Game("?help"), intents = discord.Intents.all())
 client.remove_command('help')

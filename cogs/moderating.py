@@ -8,11 +8,13 @@ class Moderating(commands.Cog):
         self.client = client
 
     @commands.command(aliases=['clear', 'delete'])
+    @commands.has_permissions(manage_messages = True)
     async def purge(self, ctx, amount=10):
         amount = amount + 1
         await ctx.channel.purge(limit=amount)
 
     @commands.command()
+    @commands.has_permissions(manage_messages = True)
     async def kick(self, ctx, member : discord.Member=None, *, reason = None):
         if member is None and reason is None:
             await ctx.send("Please specify a member!")
@@ -23,6 +25,7 @@ class Moderating(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.has_permissions(administrator = True)
     async def ban(self, ctx, member : discord.Member=None, *, reason = None):
         if member is None and reason is None:
             await ctx.send("Please specify a member!")
