@@ -7,10 +7,11 @@ client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluste
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
 collectionStatus = db['Status']
+
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
-class Profile(commands.Cog):
+class Clientprofile(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -69,7 +70,5 @@ class Profile(commands.Cog):
                 await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=message.content)) 
         await ctx.send(f"Changed the bot presence status as **{arg}ing {text}**!")
 
-    
-
 def setup(client):
-    client.add_cog(Profile(client))
+    client.add_cog(Clientprofile(client))
