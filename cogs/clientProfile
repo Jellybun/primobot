@@ -17,7 +17,7 @@ class Clientprofile(commands.Cog):
 
     @commands.command()
     async def prefix(self, ctx, prefix = None):
-        server = collectionPrefix.find_one({"guild": ctx.guild.id})
+        server = collectionPrefix.find_one({"guild": str(ctx.guild.id)})
         guildPrefix = server["prefix"]
         if prefix == None:
             await ctx.send(f"Одоогийн prefix: `{guildPrefix}`\nPrefix солих заавар:\n> {guildPrefix}prefix `<new prefix>`")
