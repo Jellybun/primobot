@@ -43,15 +43,15 @@ async def on_ready():
     text = profile['text']
     url = profile['url']
     if status == 'play':
-        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=text))
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=text))
     elif status == 'watch':
-        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=text))
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=text))
     elif status == 'compet':
-        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=text))
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=text))
     elif status == 'listen':
-        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
     elif status == 'stream':
-        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=url))
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=url))
     print('Bot is ready!')
 
 
