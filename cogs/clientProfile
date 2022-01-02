@@ -26,7 +26,7 @@ class Profile(commands.Cog):
             await ctx.send(f"The prefix for this server was changed to `{prefix}`")
 
     @commands.command()
-    async def changestatus(ctx, arg = None, *, text = None):
+    async def changestatus(self, ctx, arg = None, *, text = None):
         if arg is None and text is None:
             embed = discord.Embed(title = "Command description:", description='!changestatus `<type>` `<title>`\ntype = `watch`, `listen`, `play`, `compet`, `stream`\ntitle = Anything you want\n> !changestatus compet Owm competition')
             await ctx.send(embed = embed)
