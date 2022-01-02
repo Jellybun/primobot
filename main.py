@@ -38,7 +38,7 @@ for file in os.listdir('./cogs'):
 
 @client.event
 async def on_ready():
-    profile = collectionStatus.find_one({"guild": "primoverrse"})
+    profile = collectionStatus.find_one({"guild": "primoverse"})
     status = profile['status']
     text = profile['text']
     url = profile['url']
