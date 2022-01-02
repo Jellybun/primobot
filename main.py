@@ -11,6 +11,7 @@ userBlackList = []
 client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
+collectionStatus = db['Status']
 
 def get_prefix(client, message):
   if message.channel == message.author.dm_channel:
@@ -22,11 +23,6 @@ def get_prefix(client, message):
 
 client = commands.Bot(command_prefix = "?", activity=discord.Game("?help"), intents = discord.Intents.all())
 client.remove_command('help')
-
-def get_apod():
-    response = requests.get("https://api.nasa.gov/planetary/apod?api_key=FHlnYmh56cpv8KVLOdW8k2mCdKhAYT47A6XEKZCG")
-    json_data = json.loads(response.text)
-    return json_data
 
 @client.command()
 async def load(ctx, ext):
@@ -42,6 +38,20 @@ for file in os.listdir('./cogs'):
 
 @client.event
 async def on_ready():
+    profile = collectionStatus.find_one({"guild": "primoverrse"})
+    status = profile['status']
+    text = profile['text']
+    url = profile['url']
+    if status == 'play':
+        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=text))
+    elif status == 'watch':
+        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=text))
+    elif status == 'compet':
+        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=text))
+    elif status == 'listen':
+        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
+    elif status == 'stream':
+        await commands.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=url))
     print('Bot is ready!')
 
 
@@ -49,21 +59,6 @@ async def on_ready():
 async def ping(ctx):
     embed = discord.Embed(description=f"Current ms: `{round(client.latency * 100)}`")
     await ctx.send(embed=embed)
-
-
-@client.command()
-async def nasa(ctx):
-    data = get_apod()
-    image = data["hdurl"]
-    title = data['title']
-    date = data['date']
-    explanation = data['explanation']
-    author = data['copyright']
-    embed = discord.Embed(title=title, description=str(explanation))
-    embed.set_author(name=str(author))
-    embed.set_image(url=str(image))
-    embed.set_footer(text=str(date))
-    await ctx.send(embed = embed)
 
 class Blacklist(commands.CheckFailure):
     pass
@@ -75,7 +70,6 @@ async def userblacklist(ctx):
         return
     else:
         return True
-
 
 # On Command Error
 @client.event
