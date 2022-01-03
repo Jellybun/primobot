@@ -17,11 +17,11 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        welcomeChannel = member.guild.get_channel(927195673684750336)
+        welcomeChannel = member.guild.get_channel(857280041863479376)
         message = await welcomeChannel.fetch_message(927256713999040532)
         embed = discord.Embed(description=f'Welcome to our server! {member.mention}\nYou are our {member.guild.member_count}th member')
-        profilechecker(member.id)
-        await message.edit(embed=embed)
+        await welcomeChannel.send(embed=embed)
+
 
 
     @commands.Cog.listener()
