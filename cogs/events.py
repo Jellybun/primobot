@@ -1,10 +1,13 @@
 import discord
 import pymongo
 from discord.ext import commands
+from profileChecker import profilechecker
+
 
 client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
+collectionProfile = db['Profile']
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
@@ -15,8 +18,11 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         welcomeChannel = member.guild.get_channel(927195673684750336)
+        message = await welcomeChannel.fetch_message(927256713999040532)
         embed = discord.Embed(description=f'Welcome to our server! {member.mention}\nYou are our {member.guild.member_count}th member')
-        await welcomeChannel.send(embed=embed)
+        profilechecker(member.id)
+        await message.edit(embed=embed)
+
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):

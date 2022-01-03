@@ -6,6 +6,7 @@ import asyncio
 import requests
 import pymongo
 from discord.ext import commands, tasks
+from profileChecker import profilechecker
 userBlackList = []
 
 client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -36,8 +37,9 @@ for file in os.listdir('./cogs'):
   if file.endswith("py"):
     client.load_extension(f'cogs.{file[:-3]}')
 
-@client.event
-async def on_ready():
+async def run_once_when_ready():
+    await client.wait_until_ready()
+    print('Bot is ready')
     profile = collectionStatus.find_one({"guild": "primoverse"})
     status = profile['status']
     text = profile['text']
@@ -53,6 +55,8 @@ async def on_ready():
     elif status == 'stream':
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=url))
     print('Bot is ready!')
+
+client.loop.create_task(run_once_when_ready())
 
 
 @client.command()
