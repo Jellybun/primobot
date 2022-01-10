@@ -54,7 +54,6 @@ async def run_once_when_ready():
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
     elif status == 'stream':
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=url))
-    print('Bot is ready!')
 
 client.loop.create_task(run_once_when_ready())
 
@@ -83,4 +82,5 @@ async def on_command_error(ctx, error):
 
 
 TOKEN = os.getenv("TOKEN")
-client.run(TOKEN)
+
+client.run("OTIxMDQ1MTgyNjcyMTY2OTQy.YbtMKw.aPWtk57x4PIc_T6_TZPzUiHFr1o")
