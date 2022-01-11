@@ -18,13 +18,14 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        timeNow = datetime.datetime.now().strftime("%x")
+        timeNow = f'{datetime.datetime.now().strftime("%x")} '
+        timeNowHour = f'**|** {datetime.datetime.now().astimezone().strftime("%X")}'
         welcomeChannel = self.client.get_channel(927195673684750336)
         welcomeMessage = await welcomeChannel.fetch_message(927256713999040532)
         embed = discord.Embed(description=f'Welcome to our server! {member.mention}\nYou are our {member.guild.member_count}th member', color=16777215)
         embed.set_image(url='https://cdn.discordapp.com/attachments/832245157889441855/930055311887323206/Screen_Shot_2021-12-30_at_19.22.44.png')
         embed.set_author(name=member.name, icon_url=member.avatar_url)
-        embed.set_footer(text=timeNow)
+        embed.set_footer(text=timeNow+timeNowHour)
         profilechecker(member.id)
         await welcomeMessage.edit(embed=embed)
 
