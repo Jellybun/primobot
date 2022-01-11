@@ -1,9 +1,10 @@
 import discord
 import pymongo
 import asyncio
+import motor.motor_asyncio
 from discord.ext import commands
 
-client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
 collectionStatus = db['Status']
@@ -17,13 +18,13 @@ class Clientprofile(commands.Cog):
 
     @commands.command()
     async def prefix(self, ctx, prefix = None):
-        server = collectionPrefix.find_one({"guild": str(ctx.guild.id)})
+        server = await collectionPrefix.find_one({"guild": str(ctx.guild.id)})
         guildPrefix = server["prefix"]
         if prefix == None:
             await ctx.send(f"Одоогийн prefix: `{guildPrefix}`\nPrefix солих заавар:\n> {guildPrefix}prefix `<new prefix>`")
         else:
             new = {"$set": {"prefix": str(prefix)}}
-            collectionPrefix.update_one(server, new)
+            await collectionPrefix.update_one(server, new)
             await ctx.send(f"The prefix for this server was changed to `{prefix}`")
 
     @commands.command()
@@ -39,22 +40,22 @@ class Clientprofile(commands.Cog):
             await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "watch", "text": text}}
-            collectionStatus.update_one(profile, status)
+            await collectionStatus.update_one(profile, status)
         elif arg == 'listen':
             await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "listen", "text": text}}
-            collectionStatus.update_one(profile, status)
+            await collectionStatus.update_one(profile, status)
         elif arg == 'play':
             await self.client.change_presence(activity=discord.Game(name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "play", "text": text}}
-            collectionStatus.update_one(profile, status)
+            await collectionStatus.update_one(profile, status)
         elif arg == 'compet':
             await self.client.change_presence(activity = discord.Activity(type=discord.ActivityType.competing, name=text))
             profile = collectionStatus.find_one({"guild": "primoverse"})
             status = {"$set": {"status": "compet", "text": text}}
-            collectionStatus.update_one(profile, status)
+            await collectionStatus.update_one(profile, status)
         elif arg == 'stream':
             await ctx.send("Enter the url of __twitch__ stream:")
             def check(message):
@@ -66,7 +67,7 @@ class Clientprofile(commands.Cog):
             else:
                 profile = collectionStatus.find_one({"guild": "primoverse"})
                 status = {"$set": {"status": "stream", "text": text, "url": message.content}}
-                collectionStatus.update_one(profile, status)
+                await collectionStatus.update_one(profile, status)
                 await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=message.content)) 
         await ctx.send(f"Changed the bot presence status as **{arg}ing {text}**!")
 

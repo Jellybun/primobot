@@ -5,20 +5,22 @@ import datetime
 import asyncio
 import requests
 import pymongo
+import motor.motor_asyncio
 from discord.ext import commands, tasks
 from profileChecker import profilechecker
 userBlackList = []
 
-client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
 collectionStatus = db['Status']
+collectionTest = db['Test']
 
-def get_prefix(client, message):
+async def get_prefix(client, message):
   if message.channel == message.author.dm_channel:
     return "?"
   else:
-    server = collectionPrefix.find_one({"guild": str(message.guild.id)})
+    server = await collectionPrefix.find_one({"guild": str(message.guild.id)})
     prefix = server["prefix"]
     return prefix, "?"   
 
@@ -40,7 +42,7 @@ for file in os.listdir('./cogs'):
 async def run_once_when_ready():
     await client.wait_until_ready()
     print('Bot is ready')
-    profile = collectionStatus.find_one({"guild": "primoverse"})
+    profile = await collectionStatus.find_one({"guild": "primoverse"})
     status = profile['status']
     text = profile['text']
     url = profile['url']
@@ -62,6 +64,12 @@ client.loop.create_task(run_once_when_ready())
 async def ping(ctx):
     embed = discord.Embed(description=f"Current ms: `{round(client.latency * 100)}`")
     await ctx.send(embed=embed)
+
+@client.command()
+async def dbtest(ctx):
+    document = {"test": "9dffdf"}
+    await collectionTest.insert_one(document)
+    await ctx.send("Successfully inserted a document into the file")
 
 class Blacklist(commands.CheckFailure):
     pass

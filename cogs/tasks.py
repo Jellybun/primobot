@@ -2,8 +2,9 @@ import discord
 import pymongo
 import asyncio
 import datetime
+import motor.motor_asyncio
 from discord.ext import commands, tasks
-client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
 collectionStatus = db['Status']

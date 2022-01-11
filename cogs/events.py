@@ -1,11 +1,12 @@
 import discord
 import pymongo
 import datetime
+import motor.motor_asyncio
 from discord.ext import commands
 from profileChecker import profilechecker
 
 
-client_user = pymongo.MongoClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
 collectionPrefix = db['Prefix']
 collectionProfile = db['Profile']
@@ -19,7 +20,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         timeNow = f'{datetime.datetime.now().strftime("%x")} '
-        timeNowHour = f'**|** {datetime.datetime.now().astimezone().strftime("%X")}'
+        timeNowHour = f'| {datetime.datetime.now().astimezone().strftime("%X")}'
         welcomeChannel = self.client.get_channel(927195673684750336)
         welcomeMessage = await welcomeChannel.fetch_message(927256713999040532)
         embed = discord.Embed(description=f'Welcome to our server! {member.mention}\nYou are our {member.guild.member_count}th member', color=16777215)
@@ -33,7 +34,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         status = {"guild": str(guild.id), "prefix": "?"}
-        collectionPrefix.insert_one(status)
+        await collectionPrefix.insert_one(status)
 
 def setup(client):
     client.add_cog(Events(client))
