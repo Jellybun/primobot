@@ -17,7 +17,7 @@ class Discordcode(commands.Cog):
     @commands.command()
     async def tag(self, ctx, definer=None, *, text=None):
         if definer is None and text is None:
-            await ctx.send("?tag create `<tagName>`")
+            await ctx.send("?tag create `<tagName>`\n?tag edit `<tagName>`\n?tag delete `<tagName>`")
             return
         elif definer.lower() == "create":
             if await collectionTags.count_documents({"tagName": text}) == 0:
@@ -52,6 +52,15 @@ class Discordcode(commands.Cog):
             else:
                 await ctx.send("Tag doesn't exists!")
                 return
+        elif definer.lower() == 'delete':
+            if await collectionTags.count_documents({"tagName": text}) == 0:
+                await ctx.send("Tag doesn't exist")
+                return
+            else:
+                profile = await collectionTags.find_one({"tagName": text})
+                await collectionTags.delete_one(profile)
+                await ctx.send(f"Deleted the tag **{text}**")
+
         elif text is None:
             tagName = definer.lower()
             if await collectionTags.count_documents({"tagName": tagName}) == 0:
