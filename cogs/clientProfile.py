@@ -61,7 +61,7 @@ class Clientprofile(commands.Cog):
             def check(message):
                 return message.author == ctx.author and message.channel == ctx.channel
             try:
-                message = await commands.wait_for('message', timeout=60.0, check=check)
+                message = await self.client.wait_for('message', timeout=60.0, check=check)
             except asyncio.TimeoutError:
                 await ctx.send("Cooldown is up!")
             else:
