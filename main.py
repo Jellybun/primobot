@@ -66,10 +66,9 @@ async def ping(ctx):
     await ctx.send(embed=embed)
 
 @client.command()
-async def dbtest(ctx):
-    document = {"test": "9dffdf"}
-    await collectionTest.insert_one(document)
-    await ctx.send("Successfully inserted a document into the file")
+async def test(ctx):
+    role = ctx.guild.get_role(922763949148094515)
+    await ctx.send(role.members)
 
 class Blacklist(commands.CheckFailure):
     pass
