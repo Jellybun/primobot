@@ -15,6 +15,22 @@ class Discordcode(commands.Cog):
         self.client = client
 
     @commands.command()
+    async def tags(self, ctx):
+        allTags = ''
+        status = 1
+        async for tag in collectionTags.find():
+            if status == 1:
+                allTags += f"{tag['tagContent']}"
+                status += 1
+            else:
+                allTags += f", {tag['tagContent']}"
+                status += 1
+        embed = discord.Embed(title=f'All tags for {self.ctx.guild.name} ({status})', description=allTags, color=16777215)
+        await ctx.send(embed=embed)
+
+            
+
+    @commands.command()
     async def tag(self, ctx, definer=None, *, text=None):
         if definer is None and text is None:
             await ctx.send("?tag create `<tagName>`\n?tag edit `<tagName>`\n?tag delete `<tagName>`")

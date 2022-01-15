@@ -19,6 +19,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
+        if member.guild.id != 906153176414183475:
+            return
         oldHour = datetime.datetime.now(datetime.timezone.utc).strftime("%H")
         now = datetime.datetime.now(datetime.timezone.utc)
         newHour = int(oldHour) + 8
