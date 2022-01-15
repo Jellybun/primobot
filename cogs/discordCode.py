@@ -52,12 +52,13 @@ class Discordcode(commands.Cog):
             else:
                 await ctx.send("Tag doesn't exists!")
                 return
-        else:
-            if await collectionTags.count_documents({"tagName": text}) == 0:
+        elif text is None:
+            tagName = definer.lower()
+            if await collectionTags.count_documents({"tagName": tagName}) == 0:
                 await ctx.send("Tag doesn't exist")
                 return
             else:
-                profile = await collectionTags.find_one({"tagName": text})
+                profile = await collectionTags.find_one({"tagName": tagName})
                 await ctx.send(profile['tagContent'])
                 
 
