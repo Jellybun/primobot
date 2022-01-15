@@ -16,21 +16,41 @@ class Discordcode(commands.Cog):
 
     @commands.command()
     async def tag(self, ctx, definer=None, *, text=None):
-        if definer.lower() == "create":
+        if definer is None and text is None:
+            await ctx.send("?tag create `<tagName>`")
+            return
+        elif definer.lower() == "create":
             if await collectionTags.count_documents({"tagName": text}) == 0:
+                await ctx.send(f"What will be the content of the tag **{text}**?")
                 def check(message):
                     return message.author == ctx.author and message.channel == ctx.channel
-                await ctx.send(f"What will be the content of the tag **{text}**?")
                 try:
-                    message = await commands.wait_for('message', timeout=30.0, check=check)
+                    message = await commands.wait_for('message', timeout=60.0, check=check)
                 except asyncio.TimeoutError:
                     await ctx.send("Cooldown is up!")
                 else:
-                    document = {"tagName": text, "tagContent": message.content}
+                    document = {"tagName": str(text), "tagContent": str(message.content)}
                     await collectionTags.insert_one(document)
                     await ctx.send(f"Successfully created the tag: **{text}**")
             else:
                 await ctx.send("Tag already exists!")
+                return
+        elif definer.lower() == "edit":
+            if await collectionTags.count_documents({"tagName": text}) != 0:
+                await ctx.send(f"What will be the content of the new tag **{text}**?")
+                def check(message):
+                    return message.author == ctx.author and message.channel == ctx.channel
+                try:
+                    message = await commands.wait_for('message', timeout=60.0, check=check)
+                except asyncio.TimeoutError:
+                    await ctx.send("Cooldown is up!")
+                else:
+                    profile = await collectionTags.find_one({"tagName": str(text)})
+                    document = {"tagName": text, "tagContent": message.content}
+                    await collectionTags.update_one(profile, document)
+                    await ctx.send(f"Successfully edited the tag: **{text}**")
+            else:
+                await ctx.send("Tag doesn't exists!")
                 return
         else:
             if await collectionTags.count_documents({"tagName": text}) == 0:
