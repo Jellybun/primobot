@@ -46,7 +46,7 @@ class Discordcode(commands.Cog):
                     await ctx.send("Cooldown is up!")
                 else:
                     profile = await collectionTags.find_one({"tagName": str(text)})
-                    document = {"tagContent": str(message.content)}
+                    document = {"$set": {"tagContent": str(message.content)}}
                     await collectionTags.update_one(profile, document)
                     await ctx.send(f"Successfully edited the tag: **{text}**")
             else:
