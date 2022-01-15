@@ -65,7 +65,7 @@ class Clientprofile(commands.Cog):
             except asyncio.TimeoutError:
                 await ctx.send("Cooldown is up!")
             else:
-                profile = collectionStatus.find_one({"guild": "primoverse"})
+                profile = await collectionStatus.find_one({"guild": "primoverse"})
                 status = {"$set": {"status": "stream", "text": text, "url": message.content}}
                 await collectionStatus.update_one(profile, status)
                 await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name=text, url=message.content)) 
