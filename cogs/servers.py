@@ -1,7 +1,6 @@
 import discord
 import asyncio
 import datetime
-import numpy as np
 import motor.motor_asyncio
 from difflib import get_close_matches
 from discord.ext import commands
