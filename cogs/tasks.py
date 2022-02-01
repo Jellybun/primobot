@@ -81,10 +81,7 @@ class Tasks(commands.Cog):
     
         keys = profile['boosters'].keys()
         for key in keys:
-            if str(key) in boosters:
-                roleid = profile['boosters'][str(key)]
-                store[str(key)] = roleid
-            else:
+            if str(key) not in boosters:
                 roleid = profile['boosters'][str(key)]
                 if roleid == False:
                     pass
@@ -92,13 +89,16 @@ class Tasks(commands.Cog):
                     role = guild.get_role(roleid)
                     await role.delete()
                 user = self.client.get_user(int(key))
-                await user.send("Primoverse server-ийг boost хийсэнд баярлалаа! гэхдээ та Primoverse server дэх **Server booster** perk-ийг алдаж хувийн role-оо алдлаа")
-        status = {"$set": {"boosters": store}}
+                await user.send("Primoverse server-ийг boost хийсэнд баярлалаа! Tа Primoverse server дэх **Server booster** perk-ийг алдаж хувийн role-оо алдлаа")
+            else:
+                value = profile['boosters'][str(key)]
+                store[str(key)] = value
         for booster in boosters:
             if booster not in keys:
-                print(int(booster))
                 user = self.client.get_user(int(booster))
                 await user.send("Primoverse server-ийг boost хийсэнд баярлалаа!\nЭнэ хугацаанд та `?selfrole <name> <hexcode>` command-ийг ашиглан зөвхөн өөртөө хүссэн нэр өнгөөр хувийн role хийлгэж болно. Мөн өдөр тутмын **Daily** дээрээс 2 дахин их койн авна.")
+                store[str(booster)] = False
+        status = {"$set": {"boosters": store}}
         await collectionPrimoverse.update_one(profile, status)
 
     @checkboosters.before_loop
