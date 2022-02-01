@@ -79,14 +79,16 @@ class Botguilds(commands.Cog):
             if many is None:
                 many = 10
             asset = ['money', 'cash', 'bal', 'balance', 'coin', 'coins', 'rich', 'richest']
-            if definer.lower() in asset:
+            if definer.lower() in asset:           
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find(f"servers.{str(ctx.guild.id)}").sort("profile.coin", -1).limit(3):
-
-                    username = self.client.get_user(profile['userId'])
-                    desc += f"\n```{index}) {username}: {profile['profile']['coin'][0]+profile['profile']['coin'][1]}```"
-                    index += 1
+                async for profile in collectionProfile.find().sort("profile.coin", -1):
+                    if str(ctx.guild.id) not in profile['servers'].keys():
+                        pass
+                    else:
+                        username = self.client.get_user(profile['userId'])
+                        desc += f"\n```{index}) {username}: {profile['profile']['coin'][0]+profile['profile']['coin'][1]}```"
+                        index += 1
                 embed = discord.Embed(title=f'{ctx.guild.name} серверийн хамгийн баян {many} хэрэглэгч', description=desc, color=16777215)
                 embed.set_thumbnail(url=self.client.user.avatar_url)
                 embed.set_footer(text=footer)
@@ -94,7 +96,7 @@ class Botguilds(commands.Cog):
             else:
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1).limit(3):
+                async for profile in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1):
                     username = self.client.get_user(profile['userId'])
                     desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
                     index += 1
