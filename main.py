@@ -103,4 +103,4 @@ async def on_command_error(ctx, error):
 
 TOKEN = os.getenv("TOKEN")
 
-client.run("OTIxMDQ1MTgyNjcyMTY2OTQy.YbtMKw.aPWtk57x4PIc_T6_TZPzUiHFr1o")
+client.run("OTIxMDQ1MTgyNjcyMTY2OTQy.YbtMKw.-duPU2ikX5v5OduP5tubKHA2YI4")

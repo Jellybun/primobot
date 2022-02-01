@@ -110,8 +110,8 @@ class Tasks(commands.Cog):
     async def dailyTask(self):
         async for profile in collectionProfile.find():
             bank = profile['profile']['coin'][0]
-            bal = profile['profile']['coin'][1]
-            newbank = bank * 1.03
+            bal = int(profile['profile']['coin'][1])
+            newbank = bank*1.03
             status = {
                 '$set:': {
                     "daily": False,
