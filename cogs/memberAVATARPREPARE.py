@@ -22,8 +22,8 @@ class Membersetting(commands.Cog):
 
     @staticmethod
     def processing(avatar_bytes: bytes, author, partner, rank, profile) -> BytesIO:
-        level = int(profile['servers'][str(author.guild.id)][0])
-        xp_asint = int(profile['servers'][str(author.guild.id)][1])
+        level = int(profile['servers'][str(author.guild.id)]['level'])
+        xp_asint = int(profile['servers'][str(author.guild.id)]['xp'])
         requiredxp = level**3 + 1000
         xp = f"{xp_asint}/{requiredxp}"
         size = int(1055*(xp_asint/requiredxp))

@@ -97,7 +97,8 @@ class Helpcommand(commands.Cog):
                 }
             }
             await collectionServers.update_one(profile, status)
-            await ctx.send(f"**{ctx.author.name}**! Таны тэмдэглэлийг амжилттай хадгаллаа")
+            embed = discord.Embed(description=f"**{ctx.author.name}**! Таны тэмдэглэлийг амжилттай хадгаллаа", color=65280)
+            await ctx.send(embed=embed)
 
     @commands.command(aliases=['shop'])
     @commands.cooldown(1, 5, commands.BucketType.user)

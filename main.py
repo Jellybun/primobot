@@ -72,8 +72,8 @@ async def on_command_error(ctx, error):
     await ctx.send(error)
   elif isinstance(error, commands.CommandOnCooldown):
     time = time_converter(error.retry_after)
-    msg = f"**{ctx.author.name}**! Коммандын cooldown дуусахад **{time}** дутуу байна"
-    mainmsg = await ctx.send(msg)
+    embed = discord.Embed(description=f"**{ctx.author.name}**! Коммандын cooldown дуусахад **{time}** дутуу байна", color=16711680)
+    mainmsg = await ctx.send(embed=embed)
     await asyncio.sleep(int(error.retry_after))
     await mainmsg.delete()
   elif isinstance(error, commands.CommandNotFound):
@@ -81,7 +81,8 @@ async def on_command_error(ctx, error):
     cmds = [cmd.name for cmd in client.commands]
     matches = get_close_matches(cmd, cmds)
     if len(matches) > 0:
-        await ctx.send(f'`{cmd}` гэх command алга байна, төстэй илэрц: `{matches[0]}`')
+      embed = discord.Embed(description=f'`{cmd}` гэх command алга байна, төстэй илэрц: `{matches[0]}`', color=16711680)
+      await ctx.send(embed=embed)
     else:
       return
   elif isinstance(error, commands.MissingPermissions):
@@ -89,16 +90,19 @@ async def on_command_error(ctx, error):
     perms = error.missing_perms
     for perm in perms:
       msg += f"{perm}\n"
-    await ctx.send(f"**{ctx.author.name}**! Танд уг коммандыг гүйцэтгэх permission алга байна.\n__Missing permissions__:\n> {msg}")
+    embed = discord.Embed(description=f"**{ctx.author.name}**! Танд уг коммандыг гүйцэтгэх permission алга байна.\n__Missing permissions__:\n```{msg}```", color=16711680)
+    await ctx.send(embed=embed)
 
 
   elif isinstance(error, commands.BotMissingPermissions):
     embed = discord.Embed(description=f'I do not have the `{", ".join(error.missing_perms)}` permission to run this command!', color=16711680)
     await ctx.channel.send(embed=embed)
   elif isinstance(error, commands.MemberNotFound):
-    await ctx.channel.send(f"The user `{error.argument}` wasn't found in the server! Please enter a valid user!")
+    embed = discord.Embed(description=f"The user `{error.argument}` wasn't found in the server! Please enter a valid user!", color=16711680)
+    await ctx.channel.send(embed=embed)
   elif isinstance(error, commands.MissingRequiredArgument):
-    await ctx.send(f"Please provide all required arguments!")
+    embed = discord.Embed(description=f"Please provide all required arguments!", color=16711680)
+    await ctx.send(embed=embed)
 
 
 TOKEN = os.getenv("TOKEN")

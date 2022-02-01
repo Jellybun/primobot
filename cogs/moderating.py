@@ -149,10 +149,12 @@ class Moderating(commands.Cog):
             elif isinstance(arg2, int):
                 hexcode = int(arg2)
             await ctx.guild.create_role(name=rolename, color=discord.Colour(hexcode))
-            await ctx.send(f"**{rolename}** role-ийг амжилттай шинээр үүсгэлээ!")
+            embed = discord.Embed(description=f"**{rolename}** role-ийг амжилттай шинээр үүсгэлээ!", color=65280)
+            await ctx.send(embed=embed)
         elif define.lower() in deletecmd and arg2 == None:
             if isinstance(arg1, discord.Role):
-                await ctx.send(f"**{arg1.name}** role-ийг амжилттай устгалаа")
+                embed = discord.Embed(description=f"**{arg1.name}** role-ийг амжилттай устгалаа", color=65280)
+                await ctx.send(embed=embed)
                 await arg1.delete()
             if isinstance(arg1, str):
                 role = discord.utils.get(ctx.guild.roles, name=arg1)
@@ -161,7 +163,8 @@ class Moderating(commands.Cog):
                     return
                 else:
                     await role.delete()
-                    await ctx.send(f"**{arg1.name}** role-ийг амжилттай устгалаа")
+                    embed = discord.Embed(description=f"**{arg1.name}** role-ийг амжилттай устгалаа", color=65280)
+                    await ctx.send(embed=embed)
         elif define.lower() == "info" and arg2 == None:
             if isinstance(arg1, discord.Role):
                 role = arg1
@@ -211,15 +214,18 @@ class Moderating(commands.Cog):
             except:
                 await ctx.send(f"**{ctx.author.name}**! Role өнгө өөрчлөхөд алдаа гарлаа. Hex/Int кодийг дахин шалгана уу!")
             else:
-                await ctx.send(f"**{arg1.mention}** role өнгийг амжилттай өөрчиллөө!")
+                embed = discord.Embed(description=f"**{arg1.mention}** role өнгийг амжилттай өөрчиллөө!", color=65280)
+                await ctx.send(embed=embed)
         elif define.lower() == "add":
             if isinstance(arg1, discord.Member) and isinstance(arg2, discord.Role):
                 await arg1.add_roles(arg2)
-                await ctx.send(f"**{arg1.name}-д {arg2.mention}** role-ийг амжилттай өглөө!")
+                embed = discord.Embed(description=f"**{arg1.name}-д {arg2.mention}** role-ийг амжилттай өглөө!", color=65280)
+                await ctx.send(embed=embed)
         elif define.lower() == "remove":
             if isinstance(arg1, discord.Member) and isinstance(arg2, discord.Role):
                 await arg1.remove_roles(arg2)
-                await ctx.send(f"**{arg1.name}-ээс {arg2.mention}** role-ийг амжилттай хурааж авлаа!")
+                embed = discord.Embed(description=f"**{arg1.name}-ээс {arg2.mention}** role-ийг амжилттай хурааж авлаа!", color=65280)
+                await ctx.send()
             elif isinstance(arg1, str) and isinstance(arg2, discord.Role):
                 if arg1 == 'all':
                     members = ''
@@ -228,7 +234,8 @@ class Moderating(commands.Cog):
                     for member in membersobj:
                         await member.remove_roles(arg2)
                         index += 1
-                    await ctx.send(f"**{index}** хэрэглэгчээс амжилттай **{arg2.mention}** role-ийг хурааж авлаа")
+                    embed = discord.Embed(description=f"**{index}** хэрэглэгчээс амжилттай **{arg2.mention}** role-ийг хурааж авлаа", color=65280)
+                    await ctx.send(embed=embed)
                 else:
                     await ctx.send(f"**{ctx.author.name}**! `all` argument дээр зөвхөн тухайн role дээрх бүх хэрэглэгчийн role-ийг хурааж авна")
 
@@ -244,7 +251,7 @@ class Moderating(commands.Cog):
         if member is None and reason is None:
             await ctx.send(f"Хэрэглэгч олдсонгүй!")
             return
-        embed = discord.Embed(description=f"{member.name}-ийг амжилттай гаргалаа!")
+        embed = discord.Embed(description=f"{member.name}-ийг амжилттай гаргалаа!", color=65280)
         await member.kick(reason = reason)
         await member.send(f"You have been kicked from **{ctx.guild.name}** due to {reason} reason!")
         await ctx.send(embed=embed)
@@ -257,7 +264,7 @@ class Moderating(commands.Cog):
             await ctx.send("Хэрэглэгч олдсонгүй!")
             return
         await member.ban(reason = reason)
-        embed = discord.Embed(description=f"{member.name}ийг амжилттай ban хийлээ!")
+        embed = discord.Embed(description=f"{member.name}ийг амжилттай ban хийлээ!", color=65280)
         await member.send(f"You have been banned from **{ctx.guild.name}** due to {reason} reason!")
         await ctx.send(embed=embed)
 
@@ -269,7 +276,7 @@ class Moderating(commands.Cog):
             await ctx.send("Хэрэглэгч олдсонгүй!")
             return
         await member.unban()
-        embed = discord.Embed(description=f"{member.name}ийг амжилттай гиban хийлээ!")
+        embed = discord.Embed(description=f"{member.name}ийг амжилттай unban хийлээ!", color=65280)
         await member.send(f"You have been unbanned from **{ctx.guild.name}**!")
         await ctx.send(embed=embed)
 

@@ -43,7 +43,6 @@ class Events(commands.Cog):
                 await message.channel.send(response)
                 return
             else:
-                await message.channel.send(f"**{message.author.name}!** **{seekingmsg}** нэртэй custom command олдсонгүй")
                 return
         member = message.author
         bucket = self.cd_mapping.get_bucket(message)
@@ -64,10 +63,10 @@ class Events(commands.Cog):
                         "ring": 0
                     },
                     "servers": {
-                        str(member.guild.id): [0, 17]
-                    },
-                    "serverinfo": {
-                        str(member.guild.name): member.guild.name
+                        str(member.guild.id): {
+                            "level": 0,
+                            "xp": 17
+                        }
                     }
                 }
                 await collectionProfile.insert_one(status)
@@ -77,8 +76,8 @@ class Events(commands.Cog):
                     oldlevel = 0
                     oldxp = 0
                 else:
-                    oldlevel = profile['servers'][str(message.guild.id)][0]
-                    oldxp = profile['servers'][str(message.guild.id)][1]
+                    oldlevel = profile['servers'][str(message.guild.id)]['level']
+                    oldxp = profile['servers'][str(message.guild.id)]['xp']
                 oldcoin = profile['profile']['coin'][1]
                 bank = profile['profile']['coin'][0]
                 newxp = oldxp + 17
@@ -95,8 +94,10 @@ class Events(commands.Cog):
                 status = {
                     "$set": {
                         "profile.coin": [bank, newcoin],
-                        f"servers.{str(message.guild.id)}": [newlevel, xp],
-                        f"serverinfo.{str(member.guild.name)}": member.guild.name
+                        f"servers.{str(message.guild.id)}": {
+                            "level": newlevel,
+                            "xp": xp
+                        }
                     }
                 }
                 await collectionProfile.update_one(profile, status)
@@ -120,10 +121,10 @@ class Events(commands.Cog):
                     "ring": 0
                 },
                 "servers": {
-                    str(member.guild.id): [0, 0]
-                },
-                "serverinfo": {
-                    str(member.guild.name): member.guild.name
+                    str(member.guild.id): {
+                        "level": 0,
+                        "xp": 0
+                    }
                 }
             }
             await collectionProfile.insert_one(status)

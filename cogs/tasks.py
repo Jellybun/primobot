@@ -111,15 +111,14 @@ class Tasks(commands.Cog):
         async for profile in collectionProfile.find():
             bank = profile['profile']['coin'][0]
             bal = int(profile['profile']['coin'][1])
-            newbank = bank*1.03
+            newbank = int(bank*1.03)
             status = {
-                '$set:': {
+                "$set": {
                     "daily": False,
                     "profile.coin": [newbank, bal]
                 }
             }
             await collectionProfile.update_one(profile, status)
-        print("Successfully reset the daily status!")
 
     @dailyTask.before_loop
     async def until_next_run(self):
