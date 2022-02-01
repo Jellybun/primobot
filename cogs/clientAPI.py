@@ -22,10 +22,22 @@ class Api(commands.Cog):
     async def nasa(self, ctx):
         data = await get_apod()
         image = data["hdurl"]
+        if image is None:
+            await ctx.send("Өнөөдөр **NASA**-аас шинэ зураг ороогүй байна\nТа дараа дахин шалгана уу")
+            return
+
         title = data['title']
+        if title is None:
+            title = "Today's post"
         date = data['date']
+        if date is None:
+            date = 'Today'
         explanation = data['explanation']
+        if explanation is None:
+            explanation = 'No description'
         author = data['copyright']
+        if author is None:
+            author = 'Anonymous'
         embed = discord.Embed(title=title, description=str(explanation), color=16777215)
         embed.set_thumbnail(url=self.client.user.avatar_url)
         embed.set_author(name=str(author))
