@@ -97,10 +97,12 @@ class Botguilds(commands.Cog):
                 desc = ""
                 index = 1
                 async for profile in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1):
-                    username = self.client.get_user(profile['userId'])
-                    desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
-                    index += 1
-
+                    if str(ctx.guild.id) not in profile['servers'].keys():
+                        pass
+                    else:
+                        username = self.client.get_user(profile['userId'])
+                        desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
+                        index += 1
                 embed = discord.Embed(title=f'{ctx.guild.name} серверийн хамгийн их левелтэй {many} хэрэглэгч', description=desc, color=16777215)
                 embed.set_thumbnail(url=self.client.user.avatar_url)
                 embed.set_footer(text=footer)

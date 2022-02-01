@@ -43,7 +43,10 @@ class Api(commands.Cog):
         embed.set_author(name=str(author))
         embed.set_image(url=str(image))
         embed.set_footer(text=str(date))
-        await ctx.send(embed = embed)
+        try:
+            await ctx.send(embed = embed)
+        except:
+            await ctx.send("Өнөөдөр **NASA**-аас шинэ зураг ороогүй байна\nТа дараа дахин шалгана уу")
 
     
 
