@@ -33,16 +33,11 @@ class Events(commands.Cog):
         if message.content.lower().startswith(f"{prefix}") and str(message.guild.id) in data:
             commands = [key for key in data[str(message.guild.id)]]
             seekingmsg = message.content[1:].lower()
-            for cmd in clientcommands:
-                if seekingmsg.startswith(cmd):
-                    return
-                else:
-                    pass
-            if seekingmsg in commands:
+            if seekingmsg in clientcommands:
+                return
+            elif seekingmsg in commands:
                 response = data[str(message.guild.id)][str(seekingmsg)]
                 await message.channel.send(response)
-                return
-            else:
                 return
         member = message.author
         bucket = self.cd_mapping.get_bucket(message)
@@ -57,7 +52,7 @@ class Events(commands.Cog):
                     "profile": {
                         "coin": [0, 1000],
                         "marriage": "Single",
-                        "about": "I am a human being"
+                        "about": "instagram"
                     },
                     "inventory": {
                         "ring": 0
@@ -115,7 +110,7 @@ class Events(commands.Cog):
                 "profile": {
                     "coin": [0, 1000],
                     "marriage": "Single",
-                    "about": "I am a human being"
+                    "about": "instagram"
                 },
                 "inventory": {
                     "ring": 0
