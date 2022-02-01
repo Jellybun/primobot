@@ -48,7 +48,7 @@ class Tasks(commands.Cog):
                 }
             }
             await collectionProfile.update_one(profile, status)
-            await ctx.send(f"**{ctx.author.name}**! Та өнөөдрийн daily reward-аа авч танд **1000{coinimg}** coins нэмэгдэж орлоо\nМөн **server booster**-ийн **1500{coinimg}** coins бонус авлаа")
+            await ctx.send(f"**{ctx.author.name}**! Та өнөөдрийн daily reward-аа авч танд **{amount}{coinimg}** coins нэмэгдэж орлоо")
         else:
             await ctx.send(f"**{ctx.author.name}**! Та нэг өдөрт нэг л удаа daily reward авч болно")
             return

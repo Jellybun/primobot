@@ -14,7 +14,7 @@ collectionServers = db['Servers']
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
-clientcommands = ["service", "gift", "bag", "save", "wd", "xp", "rank", "level", "customcommands", "allcommands", "service", "selfrole", "suggest", "prefix", "ping", "help", "setuserlevel", "resetserverlevel", "lb", "leaderboard", "top", "Lb", "Top", "Leaderboard", "command", "tags", "tag", "commands", "customcommands", "lock", "unlock", "mute", "unmute", "kick", "ban", "unban", "warn", "post", "postedit", "role", "purge", "clear", "delete", "daily", "avatar", "av", "who", "whois", "userinfo", "note", "market", "shop", "buy", "purchase", "sell", "inv", "inventory", "bag", "balance", "bal", "cash", "coin", "cowoncy", "deposit", "dep", "dump", "place", "withdraw", "draw", "wd", "withd", "give", "marry", "divorce", "profile", "roll", "poke", "nasa"]
+clientcommands = ["servers", "service", "gift", "bag", "save", "wd", "xp", "rank", "level", "customcommands", "allcommands", "service", "selfrole", "suggest", "prefix", "ping", "help", "setuserlevel", "resetserverlevel", "lb", "leaderboard", "top", "Lb", "Top", "Leaderboard", "command", "tags", "tag", "commands", "customcommands", "lock", "unlock", "mute", "unmute", "kick", "ban", "unban", "warn", "post", "postedit", "role", "purge", "clear", "delete", "daily", "avatar", "av", "who", "whois", "userinfo", "note", "market", "shop", "buy", "purchase", "sell", "inv", "inventory", "bag", "balance", "bal", "cash", "coin", "cowoncy", "deposit", "dep", "dump", "place", "withdraw", "draw", "wd", "withd", "give", "marry", "divorce", "profile", "roll", "poke", "nasa"]
 
 class Events(commands.Cog):
     def __init__(self, client):

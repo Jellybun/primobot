@@ -12,6 +12,7 @@ class Helpcommand(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def service(self, ctx):
         embed = discord.Embed(title='Танилцуулга:', description="Primoverse нь Discord Bot хийх болон серверт freelancing moderator хийж өгөх үйлчилгээ үзүүлдэг. Та хэрвээ сервертээ өөрийн хүссэн маягаар bot хийлгэх эсвэл Bot болон Third-party website-уудтай ажиллаж чадах туршлагатай үйлчилгээ хэрэгтэй бол манай серверт нэгдэж илүү дэлгэрэнгүй мэдээллийг аваарай\n[Нэгдэх](https://www.discord.gg/X3YRdPNSZu)", color=16777215)
+        embed.set_image(url="https://cdn.discordapp.com/attachments/832245157889441855/936253173428015154/Screen_Shot_2021-12-30_at_19.20.02.png")
         embed.set_thumbnail(url=self.client.user.avatar_url)
         await ctx.send(embed=embed)
 
@@ -53,7 +54,7 @@ class Helpcommand(commands.Cog):
         elif category.lower() == "postedit":
             desc = '```?postedit```\n**Тайлбар:**\n```Серверт Primobot-oop бичсэн message-ийг өөрчлөх```\n**Авах утгууд:**\n`?postedit <channel> <messageId> <message/json>` – Тухайн message-ийн channel, message id болон шинэ message контент\nХэрвээ embed-message бичих бол Discohook дээрээс Json format-ийг хуулж буулган бичнэ\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```\n**Required permissions:**\n```Manage messages```'
         elif category.lower() == "clear":
-            desc = '```?clear```\n**Тайлбар:**\n```Channel дахь message устгах```\n**Авах утгууд:**\n`?clear <amount>` – Устгах message-ийн хэмжээ\n`?purge <user> <amount>` – Зөвхөн тухайн хэрэглэгчийн message-ийг устгах\n\n**Aliases:**\n```purge```\n**Cooldown:**\n```5 seconds```\n**Required permissions:**\n```Manage messages```'
+            desc = '```?clear```\n**Тайлбар:**\n```Channel дахь message устгах```\n**Авах утгууд:**\n`?clear <amount/all>` – Устгах message-ийн хэмжээ\n`?purge <user> <amount>` – Зөвхөн тухайн хэрэглэгчийн message-ийг устгах\n\n**Aliases:**\n```purge```\n**Cooldown:**\n```5 seconds```\n**Required permissions:**\n```Manage messages```'
         elif category.lower() == "mute":
             desc = '```?mute```\n**Тайлбар:**\n```Хэрэглэгчид mute role өгөх\nЭнэ комманд нь сервэрээс зөвхөн Muted гэсэн нэртэй role өгнө. Тухайн нэртэй role олдоогүй тохиолдолд хүчингүй болно```\n**Авах утгууд:**\n`?mute <user>` – Mute хийх хэрэглэгч\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```\n**Sub command:** `?unmute` – Mute хийсэн хэрэглэгээс muted role авах\n**Required permissions:**\n```Manage messages```'
         elif category.lower() == "lock":
@@ -69,7 +70,7 @@ class Helpcommand(commands.Cog):
         elif category.lower() == "resetserverlevel":
             desc = '```?resetserverlevel```\n__Note: Зөвхөн admin permission-тэй хүмүүс гүйцэтгэх комманд__\n**Тайлбар:**\n```Тухайн сервэрийн level-ийг дахин шинээр эхлэх```\n**Авах утгууд:**\n`?setuserlevel` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```'
         elif category.lower() == "tag":
-            desc = '```?tag```\n**Тайлбар:**\n```Сервердэх tag харах```\n**Авах утгууд:\n`?tag <name>` – Тухайн серверээс tag нэрээр нь хайх\n`?tags` – Тухайн сервер дэх бүх tag-ийг харах\n**Server moderation**(Шаардах permissions: __manage_messages__):\n`?tag <create> <name> <content>` – Tag шинээр үүсгэхn\n`?tag edit <name> <content>` – Өмнө нь байсан tag-ийн контентийг өөрчлөх\n`?tag delete <name>` – Tag устгах\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```'
+            desc = '```?tag```\n**Тайлбар:**\n```Сервердэх tag харах```\n**Авах утгууд:**\n`?tag <name>` – Тухайн серверээс tag нэрээр нь хайх\n`?tags` – Тухайн сервер дэх бүх tag-ийг харах\n**Server moderation**(Шаардах permissions: __manage_messages__):\n`?tag <create> <name> – Tag шинээр үүсгэхn\n`?tag edit <name>` – Өмнө нь байсан tag-ийн контентийг өөрчлөх\n`?tag delete <name>` – Tag устгах\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```'
         elif category.lower() == "note":
             desc = '```?note```\n**Тайлбар:**\n```Өөртөө сануулга үлдээх эсвэл тэмдэглэл хийх```\n**Авах утгууд:**\n`?note <content>` – Тэмдэглэл хадгалах\n`?note` – Хадгалсан тэмдэглэлээ хадгалах\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```'
         elif category.lower() == "avatar":
@@ -81,7 +82,7 @@ class Helpcommand(commands.Cog):
         elif category.lower() == 'roll':
             desc = '```?roll```\n**Тайлбар:**\n```Шоо хаях```\n**Авах утгууд:**\n`?roll <amount>` – Шоон талуудын тоо\n\n**Aliases:**\n```None```\n**Cooldown:**\n```5 seconds```'
         elif category.lower() == "nasa":
-            desc = '```?nasa```\n**Тайлбар:**\n```Өдөр тутмын сонирхолтой Nasa-ийн зурагууд үзэх```\n**Авах утгууд:**\n`?nasa` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```None```\n**Cooldown:**\n```10 seconds```'
+            desc = '```?nasa```\n**Тайлбар:**\n```Өдөр тутмын сонирхолтой Nasa-ийн зураг```\n**Авах утгууд:**\n`?nasa` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```None```\n**Cooldown:**\n```10 seconds```'
         elif category.lower() == "service":
             desc = '```?service```\n**Тайлбар:**\n```Primoverse нь Discord Bot хийх болон серверт freelancing moderator хийж өгөх үйлчилгээ үзүүлдэг. Та хэрвээ сервертээ өөрийн хүссэн маягаар bot хийлгэх эсвэл Bot болон Third-party website-уудтай ажиллаж чадах туршлагатай үйлчилгээ хэрэгтэй бол манай серверт нэгдэж илүү дэлгэрэнгүй мэдээллийг аваарай```\n[Нэгдэх](https://www.discord.gg/X3YRdPNSZu)'
 
