@@ -82,7 +82,7 @@ class Botguilds(commands.Cog):
             if definer.lower() in asset:
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find(f"servers.{str(ctx.guild.id)}").sort("profile.coin", -1).limit(many):
+                async for profile in collectionProfile.find(f"servers.{str(ctx.guild.id)}").sort("profile.coin", -1).limit(10):
 
                     username = self.client.get_user(profile['userId'])
                     desc += f"\n```{index}) {username}: {profile['profile']['coin'][0]+profile['profile']['coin'][1]}```"
@@ -94,7 +94,7 @@ class Botguilds(commands.Cog):
             else:
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1).limit(3):
+                async for profile in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1).limit(10):
                     username = self.client.get_user(profile['userId'])
                     desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
                     index += 1
