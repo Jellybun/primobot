@@ -127,7 +127,8 @@ class Events(commands.Cog):
         if member.guild.id != 906153176414183475:
             return
         async with aiohttp.ClientSession() as session:
-            webhook = weba = discord.Webhook.partial(
+            welcomechannel = self.client.get_channel(927195673684750336)
+            webhook = discord.Webhook.partial(
                 '939029007524057098',
                 'H5XEI8N8kgB5oO3gthyT4BfzDgeEY-JihIXPRfphwo7qAWxffTobmEzOZIaZg-DloRtu',
                 adapter=discord.AsyncWebhookAdapter(session)
@@ -141,6 +142,7 @@ class Events(commands.Cog):
             embed.set_image(url='https://cdn.discordapp.com/attachments/832245157889441855/930055311887323206/Screen_Shot_2021-12-30_at_19.22.44.png')
             embed.set_author(name=member.name, icon_url=member.avatar_url)
             embed.set_footer(text=new)
+            await welcomechannel.purge(limit=1)
             await webhook.send(embed=embed)
 
 
