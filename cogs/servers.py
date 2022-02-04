@@ -290,16 +290,13 @@ class Botguilds(commands.Cog):
             elif text is None:
                 tagName = definer.lower()
                 if str(tagName.lower()) not in keys:
-                    await ctx.send("Тухайн нэртэй tag алга байна!")
-                    return
-                else:
                     cmd = tagName
                     cmds = [cmd for cmd in profile['tags'].keys()]
                     matches = get_close_matches(cmd, cmds)
                     if len(matches) > 0:
                         await ctx.send(f'`{cmd}` гэх tag алга байна, төстэй илэрц: `{matches[0]}`')
-                    else:
-                        return
+                    return
+                else:
                     await ctx.send(profile['tags'][str(tagName)])
                 
 
