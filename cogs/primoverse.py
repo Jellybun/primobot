@@ -1,5 +1,6 @@
 import discord
 import datetime
+import aiohttp
 import asyncio
 import motor.motor_asyncio
 from typing import Union
@@ -97,26 +98,31 @@ class Primoverse(commands.Cog):
     @commands.command()
     async def commit(self, ctx, *, text):
         if ctx.channel == ctx.author.dm_channel:
-            now = datetime.datetime.now().strftime("%x")
-            channel = self.client.get_channel(932535601977262132)
-            store = ""
-            word = ""
-            i = 0
-            while True:
-                if text[i] == "," and text[i+1] == " ":
-                    store += f"`–{word}`\n\n"
-                    word = ""
-                    i += 2
-                else:
-                    word += text[i]
-                    i += 1
-                    if i == len(text):
+            async with aiohttp.ClientSession() as session:
+                webhook = weba = discord.Webhook.partial(
+                    '939030924245475388',
+                    'BJFJUfKV0_diR835JQmunnwNR8AwQnE3JRnw1jox23SsqoPKCO9AqEYqN_3NCii9BSSO',
+                    adapter=discord.AsyncWebhookAdapter(session)
+                )  
+                now = datetime.datetime.now().strftime("%x")
+                store = ""
+                word = ""
+                i = 0
+                while True:
+                    if text[i] == "," and text[i+1] == " ":
                         store += f"`–{word}`\n\n"
-                        break
-            embed = discord.Embed(title='New bot commits', description=store, color=15548997)
-            embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
-            embed.set_footer(text=now)
-            await channel.send(embed=embed)
+                        word = ""
+                        i += 2
+                    else:
+                        word += text[i]
+                        i += 1
+                        if i == len(text):
+                            store += f"`–{word}`\n\n"
+                            break
+                embed = discord.Embed(title='New bot commits', description=store, color=15548997)
+                embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+                embed.set_footer(text=now)
+                await webhook.send(embed=embed)
     
 
 def setup(client):

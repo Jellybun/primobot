@@ -141,10 +141,11 @@ class Moderating(commands.Cog):
     @commands.has_permissions(manage_roles = True)
     async def role(self, ctx, define, arg1: Union[discord.Member, discord.Role, str, int]=None, arg2: Union[discord.Role, str, int]=None):
         deletecmd = ['delete', 'del']
-        colorcmd = ['color', 'changecolor']
+        colorcmd = ['color', 'changecolor', 'cc']
         if define.lower() == "create":
             rolename = arg1
             if isinstance(arg2, str):
+                arg2 = arg2[1:]
                 hexcode = int(arg2, 16)
             elif isinstance(arg2, int):
                 hexcode = int(arg2)
@@ -208,15 +209,16 @@ class Moderating(commands.Cog):
             if isinstance(arg1, discord.Role) and isinstance(arg2, int):
                 hex = int(arg2)
             elif isinstance(arg1, discord.Role) and isinstance(arg2, str):
+                arg2 = arg2[1:]
                 hex = int(arg2, 16)
             try:
-                await arg1.edit(colour=discord.Colour(int(hex)))
+                await arg1.edit(colour=discord.Colour(hex))
             except:
                 await ctx.send(f"**{ctx.author.name}**! Role өнгө өөрчлөхөд алдаа гарлаа. Hex/Int кодийг дахин шалгана уу!")
             else:
                 embed = discord.Embed(description=f"**{arg1.mention}** role өнгийг амжилттай өөрчиллөө!", color=65280)
                 await ctx.send(embed=embed)
-        elif define.lower() == "add":
+        elif define.lower() == "add" or define.lower() == 'give':
             if isinstance(arg1, discord.Member) and isinstance(arg2, discord.Role):
                 await arg1.add_roles(arg2)
                 embed = discord.Embed(description=f"**{arg1.name}-д {arg2.mention}** role-ийг амжилттай өглөө!", color=65280)
