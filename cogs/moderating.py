@@ -139,7 +139,7 @@ class Moderating(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.user)
     @commands.has_permissions(manage_roles = True)
-    async def role(self, ctx, define, arg1: Union[discord.Member, discord.Role, str, int]=None, arg2: Union[discord.Role, str, int]=None):
+    async def role(self, ctx, define, arg1: Union[discord.Member, discord.Role, str, int]=None, arg2: Union[discord.Role, int, str]=None):
         deletecmd = ['delete', 'del']
         colorcmd = ['color', 'changecolor', 'cc']
         if define.lower() == "create":
