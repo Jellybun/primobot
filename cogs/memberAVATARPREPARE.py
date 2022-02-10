@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from functools import partial
 from discord.ext import commands
+from profilechecker import createprofile
 
 client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client_user['Discord']
@@ -53,6 +54,7 @@ class Membersetting(commands.Cog):
     @commands.command(aliases=['rank', 'xp', 'level'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def profile(self, ctx, typo: Union[discord.Member, str]=None, *, desc=None):
+        await createprofile(ctx.author)
         if typo is None and desc is None:
             async with ctx.channel.typing():
                 profile = await collectionProfile.find_one({'userId': ctx.author.id})

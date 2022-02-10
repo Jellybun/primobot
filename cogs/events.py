@@ -5,6 +5,7 @@ import aiohttp
 import datetime
 import motor.motor_asyncio
 from discord.ext import commands
+from profilechecker import createprofile
 
 coin = '<:coin:933027999299809380>'
 
@@ -27,6 +28,7 @@ class Events(commands.Cog):
     async def on_message(self, message):
         if message.author.bot or message.guild == None:
             return
+        await createprofile(message.author)
         with open("importcommands.json", "r") as f:
             data = json.load(f)
         profile = await collectionServers.find_one({"guildId": message.guild.id})
@@ -46,57 +48,37 @@ class Events(commands.Cog):
         if retry_after:
             pass
         else:
-            if await collectionProfile.count_documents({"userId": member.id}) == 0:
-                status = {
-                    "userId": member.id,
-                    "daily": False,
-                    "profile": {
-                        "coin": [0, 1000],
-                        "marriage": "Single",
-                        "about": "instagram"
-                    },
-                    "inventory": {
-                        "ring": 0
-                    },
-                    "servers": {
-                        str(member.guild.id): {
-                            "level": 0,
-                            "xp": 17
-                        }
-                    }
-                }
-                await collectionProfile.insert_one(status)
+            profile = await collectionProfile.find_one({"userId": member.id})
+            if str(message.guild.id) not in list(profile["servers"].keys()):
+                oldlevel = 0
+                oldxp = 0
             else:
-                profile = await collectionProfile.find_one({"userId": member.id})
-                if str(message.guild.id) not in list(profile["servers"].keys()):
-                    oldlevel = 0
-                    oldxp = 0
-                else:
-                    oldlevel = profile['servers'][str(message.guild.id)]['level']
-                    oldxp = profile['servers'][str(message.guild.id)]['xp']
-                oldcoin = profile['profile']['coin'][1]
-                bank = profile['profile']['coin'][0]
-                newxp = oldxp + 17
-                requiredxp = int(oldlevel**3 + 1000)
-                if newxp >= requiredxp:
-                    newlevel  = oldlevel + 1
-                    xp = newxp - requiredxp
-                    newcoin = oldcoin + (newlevel*1000)
-                    await message.channel.send(f"{message.author.mention}\nТа **{newlevel}** level хүрлээ!🎉🎉🎉\Level урамшуулал **{newlevel*1000}**{coin} койн таны дансанд орлоо!")
-                else:
-                    newlevel = oldlevel
-                    xp = newxp
-                    newcoin = oldcoin
-                status = {
-                    "$set": {
-                        "profile.coin": [bank, newcoin],
-                        f"servers.{str(message.guild.id)}": {
-                            "level": newlevel,
-                            "xp": xp
-                        }
+                oldlevel = profile['servers'][str(message.guild.id)]['level']
+                oldxp = profile['servers'][str(message.guild.id)]['xp']
+            oldcoin = profile['profile']['coin'][1]
+            bank = profile['profile']['coin'][0]
+            newxp = oldxp + 17
+            requiredxp = int(oldlevel**3 + 1000)
+            if newxp >= requiredxp:
+                newlevel  = oldlevel + 1
+                xp = newxp - requiredxp
+                newcoin = oldcoin + (newlevel*1000)
+                await message.channel.send(f"{message.author.mention}\nТа **{newlevel}** level хүрлээ!🎉🎉🎉\Level урамшуулал **{newlevel*1000}**{coin} койн таны дансанд орлоо!")
+            else:
+                newlevel = oldlevel
+                xp = newxp
+                newcoin = oldcoin
+            status = {
+                "$set": {
+                    "profile.coin": [bank, newcoin],
+                    f"servers.{str(message.guild.id)}": {
+                        "id": message.guild.id,
+                        "level": newlevel,
+                        "xp": xp
                     }
                 }
-                await collectionProfile.update_one(profile, status)
+            }
+            await collectionProfile.update_one(profile, status)
 
 
 
@@ -118,6 +100,7 @@ class Events(commands.Cog):
                 },
                 "servers": {
                     str(member.guild.id): {
+                        "id": member.guild.id,
                         "level": 0,
                         "xp": 0
                     }

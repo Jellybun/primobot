@@ -4,6 +4,7 @@ import datetime
 import motor.motor_asyncio
 from difflib import get_close_matches
 from discord.ext import commands
+from profilechecker import createprofile
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
@@ -71,6 +72,7 @@ class Botguilds(commands.Cog):
     @commands.command(aliases=['leaderboard', 'top', 'Lb', 'Top', 'Leaderboard'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def lb(self, ctx, definer: str=None, many: int=None):
+        await createprofile(ctx.author)
         if definer is None and many is None:
             await ctx.send(f"**{ctx.author.name}**! `level/cash` аль категорийн самбарыг хархаа тодорхойлно уу\n> ?lb `<level>/<cash>` `<index>`")
             return
@@ -82,13 +84,10 @@ class Botguilds(commands.Cog):
             if definer.lower() in asset:           
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find().sort("profile.coin", -1):
-                    if str(ctx.guild.id) not in profile['servers'].keys():
-                        pass
-                    else:
-                        username = self.client.get_user(profile['userId'])
-                        desc += f"\n```{index}) {username}: {profile['profile']['coin'][0]+profile['profile']['coin'][1]}```"
-                        index += 1
+                async for profile in collectionProfile.find({f"servers.{str(ctx.guild.id)}": ctx.guild.id}).sort("profile.coin", -1):
+                    username = self.client.get_user(profile['userId'])
+                    desc += f"\n```{index}) {username}: {profile['profile']['coin'][0]+profile['profile']['coin'][1]}```"
+                    index += 1
                 embed = discord.Embed(title=f'{ctx.guild.name} серверийн хамгийн баян {many} хэрэглэгч', description=desc, color=16777215)
                 embed.set_thumbnail(url=self.client.user.avatar_url)
                 embed.set_footer(text=footer)
@@ -96,13 +95,10 @@ class Botguilds(commands.Cog):
             else:
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1):
-                    if str(ctx.guild.id) not in profile['servers'].keys():
-                        pass
-                    else:
-                        username = self.client.get_user(profile['userId'])
-                        desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
-                        index += 1
+                async for profile in collectionProfile.find({"servers.{str(ctx.guild.id)}": ctx.guild.id}).sort(f"servers.{str(ctx.guild.id)}.level", -1):
+                    username = self.client.get_user(profile['userId'])
+                    desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
+                    index += 1
                 embed = discord.Embed(title=f'{ctx.guild.name} серверийн хамгийн их левелтэй {many} хэрэглэгч', description=desc, color=16777215)
                 embed.set_thumbnail(url=self.client.user.avatar_url)
                 embed.set_footer(text=footer)

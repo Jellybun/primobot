@@ -75,7 +75,11 @@ class Primoverse(commands.Cog):
                 return
             else:
                 if isinstance(color, str):
-                    hexcode = int(color, 16)
+                    if color.startswith("#"):
+                        code = color[1:]
+                    else:
+                        code = color
+                    hexcode = int(code, 16)
                 elif isinstance(color, int):
                     hexcode = int(color)
                 if str(ctx.author.id) not in keys:

@@ -95,13 +95,13 @@ async def on_command_error(ctx, error):
 
 
   elif isinstance(error, commands.BotMissingPermissions):
-    embed = discord.Embed(description=f'I do not have the `{", ".join(error.missing_perms)}` permission to run this command!', color=16711680)
+    embed = discord.Embed(description=f'**{ctx.author.name}!**, Надад энэ коммандыг гүйцэтгэх permission алга байна!\nMissing Permissions: `{", ".join(error.missing_perms)}`', color=16711680)
     await ctx.channel.send(embed=embed)
   elif isinstance(error, commands.MemberNotFound):
-    embed = discord.Embed(description=f"The user `{error.argument}` wasn't found in the server! Please enter a valid user!", color=16711680)
+    embed = discord.Embed(description=f"**{ctx.author.name}!**, Тухайн хэрэглэгч (`{error.argument}`) энэ серверт олдсонгүй", color=16711680)
     await ctx.channel.send(embed=embed)
   elif isinstance(error, commands.MissingRequiredArgument):
-    embed = discord.Embed(description=f"Please provide all required arguments!", color=16711680)
+    embed = discord.Embed(description=f"**{ctx.author.name}!**, Уг коммандыг гүйцэтгэхэд шаардлах утгууд дутуу байна!", color=16711680)
     await ctx.send(embed=embed)
 
 

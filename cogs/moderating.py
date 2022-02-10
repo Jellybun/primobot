@@ -145,8 +145,11 @@ class Moderating(commands.Cog):
         if define.lower() == "create":
             rolename = arg1
             if isinstance(arg2, str):
-                arg2 = arg2[1:]
-                hexcode = int(arg2, 16)
+                if arg2.lower().startswith("#"):
+                    arg2 = arg2[1:]
+                    hexcode = int(arg2, 16)
+                else:
+                    hexcode = int(arg2, 16)
             elif isinstance(arg2, int):
                 hexcode = int(arg2)
             await ctx.guild.create_role(name=rolename, color=discord.Colour(hexcode))
@@ -209,8 +212,11 @@ class Moderating(commands.Cog):
             if isinstance(arg1, discord.Role) and isinstance(arg2, int):
                 hex = int(arg2)
             elif isinstance(arg1, discord.Role) and isinstance(arg2, str):
-                arg2 = arg2[1:]
-                hex = int(arg2, 16)
+                if arg2.lower().startswith("#"):
+                    arg2 = arg2[1:]
+                    hex = int(arg2, 16)
+                else:
+                    hex = int(arg2, 16)
             try:
                 await arg1.edit(colour=discord.Colour(hex))
             except:
