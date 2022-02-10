@@ -82,7 +82,7 @@ class Botguilds(commands.Cog):
             if definer.lower() in asset:           
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find({f"servers.{str(ctx.guild.id)}": ctx.guild.id}).sort("profile.coin", -1):
+                async for profile in collectionProfile.find({f"servers.{ctx.guild.id}.id": ctx.guild.id}).sort("profile.coin", -1):
                     username = self.client.get_user(profile['userId'])
                     desc += f"\n```{index}) {username}: {profile['profile']['coin'][0]+profile['profile']['coin'][1]}```"
                     index += 1
@@ -93,7 +93,7 @@ class Botguilds(commands.Cog):
             else:
                 desc = ""
                 index = 1
-                async for profile in collectionProfile.find({"servers.{str(ctx.guild.id)}": ctx.guild.id}).sort(f"servers.{str(ctx.guild.id)}.level", -1):
+                async for profile in collectionProfile.find({f"servers.{str(ctx.guild.id)}.id": ctx.guild.id}).sort(f"servers.{str(ctx.guild.id)}.level", -1):
                     username = self.client.get_user(profile['userId'])
                     desc += f"```{index}) {username}: {profile['servers'][str(ctx.guild.id)]['level']}\n```"
                     index += 1
@@ -203,7 +203,6 @@ class Botguilds(commands.Cog):
             
 
     @commands.command()
-    @commands.has_permissions(manage_messages =True)
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def tag(self, ctx, definer: str, *, text: str=None):
         async with ctx.channel.typing():
