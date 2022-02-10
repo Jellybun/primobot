@@ -31,7 +31,6 @@ class Api(commands.Cog):
             explanation = 'No description'
 
         embed = discord.Embed(title=title, description=str(explanation), color=16777215)
-        await ctx.send(embed=embed)
         try:
             image = data["hdurl"]
         except:

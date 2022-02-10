@@ -86,18 +86,28 @@ class Primoverse(commands.Cog):
                     await ctx.guild.create_role(name=rolename, color=discord.Colour(hexcode))
                     selfrole = discord.utils.get(ctx.guild.roles, name=rolename)
                     await ctx.author.add_roles(selfrole)
-                    await ctx.send(f"Та амжилттай **{rolename}** role-ийг хийлээ")
+                    await ctx.send(f"{ctx.author.menion}!, Та амжилттай **{rolename}** role-ийг хийлээ")
                     status = {"$set": {
                         f"boosters.{str(ctx.author.id)}": selfrole.id
                     }}
                     await collectionPrimoverse.update_one(profile, status)
                 else:
                     roleid = profile['boosters'][str(ctx.author.id)]
-                    role = ctx.guild.get_role(roleid)
-                    await role.edit(name=rolename, color=discord.Colour(hexcode))
-                    await ctx.send(f"Та амжилттай **{rolename}** role-ийг шинэчлэлээ")
-        else:
-            pass
+                    if type(roleid) == int:
+                        role = ctx.guild.get_role(roleid)
+                        await role.edit(name=rolename, color=discord.Colour(hexcode))
+                        await ctx.send(f"{ctx.author.menion}!, Та амжилттай **{rolename}** role-ийг шинэчлэлээ")
+                        return
+                    else:
+                        await ctx.guild.create_role(name=rolename, color=discord.Colour(hexcode))
+                        selfrole = discord.utils.get(ctx.guild.roles, name=rolename)
+                        await ctx.author.add_roles(selfrole)
+                        await ctx.send(f"{ctx.author.menion}!, Та амжилттай **{rolename}** role-ийг хийлээ")
+                        status = {"$set": {
+                            f"boosters.{str(ctx.author.id)}": selfrole.id
+                        }}
+                        await collectionPrimoverse.update_one(profile, status)
+                        return
 
     @commands.command()
     async def commit(self, ctx, *, text):
