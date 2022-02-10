@@ -5,7 +5,6 @@ import aiohttp
 import datetime
 import motor.motor_asyncio
 from discord.ext import commands
-from profilechecker import createprofile
 
 coin = '<:coin:933027999299809380>'
 
@@ -28,7 +27,27 @@ class Events(commands.Cog):
     async def on_message(self, message):
         if message.author.bot or message.guild == None:
             return
-        await createprofile(message.author)
+        if await collectionProfile.count_documents({"userId": message.author.id}) == 0:
+            status = {
+                "userId": message.author.id,
+                "daily": False,
+                "profile": {
+                    "coin": [0, 1000],
+                    "marriage": "Single",
+                    "about": "instagram"
+                },
+                "inventory": {
+                    "ring": 0
+                },
+                "servers": {
+                    str(message.guild.id): {
+                        "id": message.guild.id,
+                        "level": 0,
+                        "xp": 0
+                    }
+                }
+            }
+            await collectionProfile.insert_one(status)
         with open("importcommands.json", "r") as f:
             data = json.load(f)
         profile = await collectionServers.find_one({"guildId": message.guild.id})

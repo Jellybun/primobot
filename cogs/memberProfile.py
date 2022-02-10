@@ -5,7 +5,6 @@ import random
 import motor.motor_asyncio
 from typing import Union
 from discord.ext import commands
-from profilechecker import createprofile
 coin = '<:coin:933027999299809380>'
 
 client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -82,7 +81,6 @@ class Helpcommand(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def note(self, ctx, *, text=None):
-        await createprofile(ctx.author)
         if text is None:
             profile = await collectionServers.find_one({"guildId": ctx.guild.id})
             if str(ctx.author.id) not in profile['notes'].keys():
@@ -105,7 +103,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['shop'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def market(self, ctx, definer: str=None, * ,info=None):
-        await createprofile(ctx.author)
         if definer == None and info == None:
             items = ""
             index = 0
@@ -128,7 +125,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['purchase'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def buy(self, ctx, good: str=None, quan: int=1):
-        await createprofile(ctx.author)
         if good is None and quan is None:
             await ctx.send("Юу авах гэж байгаагаа оруулна уу")
             return
@@ -158,7 +154,6 @@ class Helpcommand(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def sell(self, ctx, good: str=None):
-        await createprofile(ctx.author)
         if good is None:
             await ctx.send("**{ctx.author.name}**! Юу зарах гэж байгаагаа оруулна уу")
             return
@@ -185,7 +180,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['inventory', 'bag'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def inv(self, ctx, member: discord.Member=None):
-        await createprofile(ctx.author)
         if member is None:
             member = ctx.author
         if await collectionProfile.count_documents({"userId": member.id}) == 0:
@@ -203,7 +197,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['bal', 'cash', 'coin', 'cowoncy'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def balance(self, ctx):
-        await createprofile(ctx.author)
         footer = datetime.datetime.now().strftime("%x")
         profile = await collectionProfile.find_one({"userId": ctx.author.id})
         bank = profile['profile']['coin'][0]
@@ -218,7 +211,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['dep', 'dump', 'save'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def deposit(self, ctx, amount: Union[str, int]=None):
-        await createprofile(ctx.author)
         if amount is None:
             await ctx.send("**{ctx.author.name}**! Та coin хадгалах хэмжээгээ оруулна уу")
             return
@@ -255,7 +247,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['withd', 'wd', 'draw'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def withdraw(self, ctx, amount: Union[int, str]=None):
-        await createprofile(ctx.author)
         if amount is None:
             await ctx.send("**{ctx.author.name}**! Та coin авах хэмжээгээ оруулна уу")
             return
@@ -291,8 +282,7 @@ class Helpcommand(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def give(self, ctx, member: discord.Member=None, amount: int=None):
-        await createprofile(ctx.author)
+    async def give(self, ctx, member: discord.Member=None, amount: int=None):   
         if member is None and amount is None:
             await ctx.send("Хэрэглэгч олдсонгүй!")
         else:
@@ -314,7 +304,6 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['marriage', 'husband', 'wife', 'propose'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def marry(self, ctx, member: discord.Member=None):
-        await createprofile(ctx.author)
         profile = await collectionProfile.find_one({"userId": ctx.author.id})
         if member is None:
             status = profile['profile']['marriage']
@@ -376,7 +365,6 @@ class Helpcommand(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def divorce(self, ctx):
-        await createprofile(ctx.author)
         profile = await collectionProfile.find_one({"userId": ctx.author.id})
         status = profile['profile']['marriage']
         if isinstance(status, int):

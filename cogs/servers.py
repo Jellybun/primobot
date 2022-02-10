@@ -4,7 +4,6 @@ import datetime
 import motor.motor_asyncio
 from difflib import get_close_matches
 from discord.ext import commands
-from profilechecker import createprofile
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
@@ -72,7 +71,6 @@ class Botguilds(commands.Cog):
     @commands.command(aliases=['leaderboard', 'top', 'Lb', 'Top', 'Leaderboard'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def lb(self, ctx, definer: str=None, many: int=None):
-        await createprofile(ctx.author)
         if definer is None and many is None:
             await ctx.send(f"**{ctx.author.name}**! `level/cash` аль категорийн самбарыг хархаа тодорхойлно уу\n> ?lb `<level>/<cash>` `<index>`")
             return
