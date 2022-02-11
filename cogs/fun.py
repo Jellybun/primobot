@@ -79,7 +79,6 @@ class Helpcommand(commands.Cog):
                     if status[str(i)]['horse'] not in winners:
                         status[str(i)]['pts'] += int(random.choice(jump))
                     if status[str(i)]['pts'] >= limit and status[str(i)]['horse'] not in winners:
-                        print("Winner borns")
                         status[str(i)]['pts'] = limit
                         winners.append(status[str(i)]['horse'])
                 embed3 = discord.Embed(title=f"{ctx.author.name} bet {bet} coins on horse race!", description=f"`Таны сонгосон морь:` {userhorse}\n\n{inv*status['0']['pts']}<a:horse_green:941686663111913552>{inv*(limit-status['0']['pts'])}🏁\n{inv*status['1']['pts']}<a:horse_orange:941686662784762036>{inv*(limit-status['1']['pts'])}🏁\n{inv*status['2']['pts']}<a:horse_white:941686662252089354>{inv*(limit-status['2']['pts'])}🏁\n{inv*status['3']['pts']}<a:horse_blue:941686661748785162>{inv*(limit-status['3']['pts'])}🏁\n{inv*status['4']['pts']}<a:horse_red:941686663061590096>{inv*(limit-status['4']['pts'])}🏁\n{inv*status['5']['pts']}<a:horse_purple:941686662046576680>{inv*(limit-status['5']['pts'])}🏁\n{inv*status['6']['pts']}<a:horse_yellow:941686661937504277>{inv*(limit-status['6']['pts'])}🏁", color=16777215)
