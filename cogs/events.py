@@ -49,7 +49,7 @@ class Events(commands.Cog):
                 }
             }
             await collectionProfile.insert_one(status)
-            
+
     @commands.Cog.listener('on_message')
     async def xpsystem(self, message):
         if message.author.bot or message.guild == None:
@@ -98,8 +98,11 @@ class Events(commands.Cog):
             return
         if message.channel == message.author.dm_channel:
             if await collectionChats.count_documents({"userId": message.author.id}) == 0:
-                await message.channel.send('Танд тусламж хэрэгтэй бол **Primoverse** серверийн #help гэсэн channel дээрээс хэрэгтэй зүйлээ бичээрэй')
-                return
+                if message.content.startswith("?"):
+                    return
+                else:
+                    await message.channel.send('Танд тусламж хэрэгтэй бол **Primoverse** серверийн #help гэсэн channel дээрээс хэрэгтэй зүйлээ бичээрэй')
+                    return
             else:
                 profile = await collectionChats.find_one({"userId": message.author.id})
                 partner = self.client.get_user(profile['partner'])

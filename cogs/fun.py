@@ -24,7 +24,7 @@ slotMapping = {
     "<:slots_777:941618295168180224>": 10
 }
 
-class Helpcommand(commands.Cog):
+class Fun(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -36,40 +36,34 @@ class Helpcommand(commands.Cog):
         await jelly.send(f"{ctx.author.mention} pokes {member.mention}\n> {msg}")
         await ctx.message.delete()
 
+ 
+  
+    @commands.command()
+    async def test(self, ctx):
+        await collectionChats.insert_one({"room": "main", "users": []})
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def start(self, ctx):
         if ctx.channel == ctx.author.dm_channel:
             if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
-                isChatting = False
-            else:
-                isChatting = True
-            if isChatting:
-                await ctx.send("Алдаа!, Та өрөөнөөс гарч байж дахин өөр хэрэглэгчтэй холбогдох боломжтой")
-                return
-            else:
-                waitingroom = await collectionChats.find_one({"room": "waitingroom"})
-                users = waitingroom['users']
-                if ctx.author.id not in users:
+                mainroom = await collectionChats.find_one({"room": "main"})
+                users = mainroom['users']
+                if ctx.author.id not in users: 
                     users.append(ctx.author.id)
-                    status = {"$set": {"users": users}}
-                    await collectionChats.update_one(waitingroom, status)
+                    print(users)
+                    status = {
+                    "$set": {
+                        "users": users
+                    }
+                }
+                    await collectionChats.update_one(mainroom, status)
                     await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
-                    while True:
-                        partner = waitingroom['users'][0]
-                        if partner == ctx.author.id:
-                            pass
-                        elif partner != ctx.author.id and await collectionChats.count_documents({"userId": partner}) == 0 and await collectionChats.count_documents({"userId": ctx.author.id, "partner": partner}) == 0:
-                            users.remove(ctx.author.id)
-                            await collectionChats.insert_one({"userId": ctx.author.id, "partner": partner})
-                            await collectionChats.insert_one({"userId": partner, "partner": ctx.author.id})
-                            await ctx.send("Xэрэглэгч тантай холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")
-                            break
-                        else:
-                            print("Some weird stuff")
                 else:
                     await ctx.send("Та хүлээлгийн өрөөн дотор орсон байна!. Өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
                     return
+            else:
+                await ctx.send("Алдаа!, Та өрөөнөөс гарч байж дахин өөр хэрэглэгчтэй холбогдох боломжтой")
+                return
         else:
             await ctx.send(f"**{ctx.author.name}!**, Тухайн комманд нь зөвхөн **Primobot**-ийн dm channel-д ашиглагдах комманд болно\nТа `?help leave` гэж бичин дэлгэрэнгүй мэдээлэл авна уу")
             return
@@ -131,20 +125,7 @@ class Helpcommand(commands.Cog):
             await msg.delete
             return
         else:
-            if message.content == "1":
-                userhorse = "<a:horse_green:941686663111913552>"
-            elif message.content == "2":
-                userhorse = "<a:horse_orange:941686662784762036>"
-            elif message.content == "3":
-                userhorse = "<a:horse_white:941686662252089354>"
-            elif message.content == "4":
-                userhorse = "<a:horse_blue:941686661748785162>"
-            elif message.content == "5":
-                userhorse = "<a:horse_red:941686663061590096>"
-            elif message.content == "6":
-                userhorse = "<a:horse_purple:941686662046576680>"
-            elif message.content == "7":
-                userhorse = "<a:horse_yellow:941686661937504277>"
+            userhorse = status[str(int(message.content)-1)]['horse']
             embed2 = discord.Embed(title=f"{ctx.author.name} bet {bet} coins on horse race!", description=f"`Таны сонгосон морь:` {str(userhorse)}\n\n<a:horse_green:941686663111913552>{inv*limit}🏁\n<a:horse_orange:941686662784762036>{inv*limit}🏁\n<a:horse_white:941686662252089354>{inv*limit}🏁\n<a:horse_blue:941686661748785162>{inv*limit}🏁\n<a:horse_red:941686663061590096>{inv*limit}🏁\n<a:horse_purple:941686662046576680>{inv*limit}🏁\n<a:horse_yellow:941686661937504277>{inv*limit}🏁", color=16777215)
             await msg.edit(embed=embed2)
             while True:
@@ -164,12 +145,12 @@ class Helpcommand(commands.Cog):
                         color = 65280
                         bank = profile['profile']['coin'][0]
                         bal = cash+(bet*10)
-                        status = {
+                        document = {
                             "$set": {
                                 "profile.coin": [bank, bal]
                             }
                         }
-                        await collectionProfile.update_one(profile, status)
+                        await collectionProfile.update_one(profile, document)
                     else:
                         for item in winners:
                             if item != userhorse:
@@ -180,12 +161,12 @@ class Helpcommand(commands.Cog):
                         color = 16711680
                         bank = profile['profile']['coin'][0]
                         bal = cash-bet
-                        status = {
+                        document = {
                             "$set": {
                                 "profile.coin": [bank, bal]
                             }
                         }
-                        await collectionProfile.update_one(profile, status)
+                        await collectionProfile.update_one(profile, document)
                     desc = f"{inv*status['0']['pts']}<a:horse_green:941686663111913552>{inv*(limit-status['0']['pts'])}🏁\n{inv*status['1']['pts']}<a:horse_orange:941686662784762036>{inv*(limit-status['1']['pts'])}🏁\n{inv*status['2']['pts']}<a:horse_white:941686662252089354>{inv*(limit-status['2']['pts'])}🏁\n{inv*status['3']['pts']}<a:horse_blue:941686661748785162>{inv*(limit-status['3']['pts'])}🏁\n{inv*status['4']['pts']}<a:horse_red:941686663061590096>{inv*(limit-status['4']['pts'])}🏁\n{inv*status['5']['pts']}<a:horse_purple:941686662046576680>{inv*(limit-status['5']['pts'])}🏁\n{inv*status['6']['pts']}<a:horse_yellow:941686661937504277>{inv*(limit-status['6']['pts'])}🏁"
                     embedlast = discord.Embed(title=titlemsg, description=f"`Таны сонгосон морь:` {userhorse} **|** `Эзэлсэн байр:` **{index}**\n\n{desc}", color=color)
                     await msg.edit(embed=embedlast)
@@ -283,4 +264,4 @@ class Helpcommand(commands.Cog):
     
 
 def setup(client):
-    client.add_cog(Helpcommand(client))
+    client.add_cog(Fun(client))

@@ -11,6 +11,7 @@ collectionServers = db['Servers']
 collectionCommands = db['Commands']
 collectionPrimoverse = db['Primoverse']
 collectionProfile = db['Profile']
+collectionChats = db['Chats']
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 coinimg = "<:coin:933027999299809380>"
@@ -21,6 +22,7 @@ class Tasks(commands.Cog):
         self.dailyTask.start()
         self.checkboosters.start()
         self.commandimporter.start()
+        self.quizmo.start()
 
     @commands.command()
     async def daily(self, ctx):
@@ -55,6 +57,31 @@ class Tasks(commands.Cog):
             await ctx.send(f"**{ctx.author.name}**! Та нэг өдөрт нэг л удаа daily reward авч болно")
             return
 
+    @tasks.loop(seconds=5)
+    async def quizmo(self):
+        mainroom = await collectionChats.find_one({"room": "main"})
+        users = mainroom['users']
+        i = 0
+        length = len(users)
+        while i < length:
+            try:
+                users.remove(users[0])
+                users.remove(users[1])
+            except:
+                pass
+            else:
+                doc1 = {"userId": users[0], "partner": users[1]}
+                doc2 = {"userId": users[1], "partner": users[0]}
+                user1 = self.client.get_user(users[0])
+                user2 = self.client.get_user(users[1])
+                await collectionChats.insert_one(doc1)
+                await collectionChats.insert_one(doc2)
+                await user1.send("Tантай xэрэглэгч холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")
+                await user2.send("Tантай xэрэглэгч холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")
+
+    @quizmo.before_loop
+    async def until_next_run_quizmo(self):
+        await self.client.wait_until_ready()
 
     @tasks.loop(minutes=1)
     async def commandimporter(self):
