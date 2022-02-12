@@ -100,7 +100,7 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['hr'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def horserace(self, ctx, bet: int=None):
-        profile = collectionProfile.find_one({"userId": ctx.author.id})
+        profile = await collectionProfile.find_one({"userId": ctx.author.id})
         cash = profile['profile']['coin'][1]
         if bet is None:
             bet = 1
@@ -194,7 +194,7 @@ class Helpcommand(commands.Cog):
     @commands.command(aliases=['slots'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def slot(self, ctx, amount: int=None):
-        profile = collectionProfile.find_one({"userId": ctx.author.id})
+        profile = await collectionProfile.find_one({"userId": ctx.author.id})
         cash = profile['profile']['coin'][1]
         if amount is None:
             amount = 1
