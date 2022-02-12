@@ -57,27 +57,34 @@ class Tasks(commands.Cog):
             await ctx.send(f"**{ctx.author.name}**! Та нэг өдөрт нэг л удаа daily reward авч болно")
             return
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=10)
     async def quizmo(self):
-        mainroom = await collectionChats.find_one({"room": "main"})
-        users = mainroom['users']
+        profile = await collectionChats.find_one({"room": "room"})
+        lining = profile['lining']
+        users = []
         i = 0
-        length = len(users)
+        length = int(len(lining)/2)
         while i < length:
-            try:
-                users.remove(users[0])
-                users.remove(users[1])
-            except:
-                pass
-            else:
-                doc1 = {"userId": users[0], "partner": users[1]}
-                doc2 = {"userId": users[1], "partner": users[0]}
-                user1 = self.client.get_user(users[0])
-                user2 = self.client.get_user(users[1])
-                await collectionChats.insert_one(doc1)
-                await collectionChats.insert_one(doc2)
-                await user1.send("Tантай xэрэглэгч холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")
-                await user2.send("Tантай xэрэглэгч холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")
+            user1 = lining[0]
+            user2= lining[1]
+            for i in range(len(lining)):
+                if i in [0, 1]:
+                    pass
+                else:
+                    users = users + [lining[i]]
+            i += 1
+            doc1 = {"userId": user1, "partner": user2}
+            doc2 = {"userId": user2, "partner": user1}
+
+            await collectionChats.insert_one(doc1)
+            await collectionChats.insert_one(doc2)
+            user1 = self.client.get_user(user1)
+            if user1 != None:
+                await user1.send("Tантай xэрэглэгч холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")                
+            user2 = self.client.get_user(user2)
+            if user2 != None:
+                await user2.send("Tантай xэрэглэгч холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")                
+        await collectionChats.update_one(profile, {"$set": {"lining": users}})
 
     @quizmo.before_loop
     async def until_next_run_quizmo(self):

@@ -39,24 +39,20 @@ class Fun(commands.Cog):
  
   
     @commands.command()
-    async def test(self, ctx):
-        await collectionChats.insert_one({"room": "main", "users": []})
+    async def deploy(self, ctx):
+        await collectionChats.insert_one({"room": "room", "lining": []})
+        await ctx.send('Done')
+
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def start(self, ctx):
         if ctx.channel == ctx.author.dm_channel:
             if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
-                mainroom = await collectionChats.find_one({"room": "main"})
-                users = mainroom['users']
+                profile = await collectionChats.find_one({"room": "room"})
+                users = profile['lining']
                 if ctx.author.id not in users: 
-                    users.append(ctx.author.id)
-                    print(users)
-                    status = {
-                    "$set": {
-                        "users": users
-                    }
-                }
-                    await collectionChats.update_one(mainroom, status)
+                    users = profile['lining'] + [ctx.author.id]
+                    await collectionChats.update_one(profile, {"$set": {"lining": users}})
                     await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
                 else:
                     await ctx.send("Та хүлээлгийн өрөөн дотор орсон байна!. Өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
@@ -65,7 +61,7 @@ class Fun(commands.Cog):
                 await ctx.send("Алдаа!, Та өрөөнөөс гарч байж дахин өөр хэрэглэгчтэй холбогдох боломжтой")
                 return
         else:
-            await ctx.send(f"**{ctx.author.name}!**, Тухайн комманд нь зөвхөн **Primobot**-ийн dm channel-д ашиглагдах комманд болно\nТа `?help leave` гэж бичин дэлгэрэнгүй мэдээлэл авна уу")
+            await ctx.send(f"**{ctx.author.name}!**, Тухайн комманд нь зөвхөн **Primobot**-ийн dm channel-д ашиглагдах комманд болно\nТа `?help start` гэж бичин дэлгэрэнгүй мэдээлэл авна уу")
             return
 
     @commands.command()
