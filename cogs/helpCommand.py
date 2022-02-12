@@ -20,13 +20,13 @@ class Helpcommand(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def help(self, ctx, category=None):        
         if category is None:
-            desc = f'Комманд тус бүрийн талаар `?help <command>` гэж дэлгэрэнгүй мэдээлэл аваарай\n\n__**Main commands:**__\n> `profile` `leaderboard`\n\n__**Economy:**__\n> `daily` `balance` `give` `shop` `buy` `sell` `inventory` `deposit` `withdraw` `marry`\n\n__**Moderation:**__\n> `command` `role` `post` `clear` `mute` `lock` `warn` `kick` `ban` `setuserlevel` `resetserverlevel`\n\n__**Utility:**__\n> `tag` `note` `avatar` `userinfo`\n\n__**Fun:**__\n> `roll` `poke`\n\n__**Education:**__\n> `nasa`\n*more features coming soon...*\n\n__**Service:**__\n> `service`'
+            desc = f'Комманд тус бүрийн талаар `?help <command>` гэж дэлгэрэнгүй мэдээлэл аваарай\n\n__**Main commands:**__\n> `profile` `leaderboard`\n\n__**Economy:**__\n> `daily` `balance` `give` `shop` `buy` `sell` `inventory` `deposit` `withdraw` `marry`\n\n__**Moderation:**__\n> `command` `role` `post` `clear` `mute` `lock` `warn` `kick` `ban` `setuserlevel` `resetserverlevel`\n\n__**Utility:**__\n> `tag` `note` `avatar` `userinfo`\n\n__**Fun:**__\n> `roll` `poke` `slots` `stranger` `horserace` \n\n__**Education:**__\n> `nasa`\n`more features coming soon...`\n\n__**Service:**__\n> `service`'
         elif category.lower() == "profile":
             desc = '```?profile```\n**Тайлбар:**\n```Primobot дээрх өөрийн үзүүлэлт болон тухайн серверт хэдэн левелтэй байгаагаа харах```\n**Авах утгууд:**\n`?profile` – Өөрийн profile-ийг харах\n`?profile <user>` – Бусад хэрэглэгчийн profile-ийг харах\n`?profile set <text>` – Profile-ийн description хэсгийн өөрчлөх\n\n**Aliases:**\n```rank, xp, level```\n**Cooldown:**\n```10 seconds```'
         elif category.lower() == "leaderboard":
             desc = '```?leaderboard```\n**Тайлбар:**\n```Сервер дахь хамгийн их level болон coin-тэй хэрэглэгчдийг харах```\n**Авах утгууд:**\n`?leaderboard <level/xp> <index>` – Өөрийн profile-ийг харах\n`?leaderboard <cash/money/rich/coin> {quantity}` – Бусад хэрэглэгчийн profile-ийг харах\n\n**Aliases:**\n```lb```\n**Cooldown:**\n```10 seconds```'
         elif category.lower() == "daily":
-            desc = '```?daily```\n**Тайлбар:**\n```Primobot дээрх өдөр тутмын daily авах```\n**Авах утгууд:**\n`?daily` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```None```\n**Cooldown:**\n```10 seconds```'
+            desc = '```?daily```\n**Тайлбар:**\n```Primobot дээрх өдөр тутмын daily coins авах```\n**Авах утгууд:**\n`?daily` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```None```\n**Cooldown:**\n```10 seconds```'
         elif category.lower() == "balance":
             desc = '```?balance```\n**Тайлбар:**\n```Primobot дээрх өөрийн дансны мэдээлэл харах```\n**Авах утгууд:**\n`?balance` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```cash, coin, bal, money```\n**Cooldown:**\n```5 seconds```'
         elif category.lower() == "give":
@@ -85,7 +85,12 @@ class Helpcommand(commands.Cog):
             desc = '```?nasa```\n**Тайлбар:**\n```Өдөр тутмын сонирхолтой Nasa-ийн зураг```\n**Авах утгууд:**\n`?nasa` – Нэмэлт утга авахгүй\n\n**Aliases:**\n```None```\n**Cooldown:**\n```10 seconds```'
         elif category.lower() == "service":
             desc = '```?service```\n**Тайлбар:**\n```Primoverse нь Discord Bot хийх болон серверт freelancing moderator хийж өгөх үйлчилгээ үзүүлдэг. Та хэрвээ сервертээ өөрийн хүссэн маягаар bot хийлгэх эсвэл Bot болон Third-party website-уудтай ажиллаж чадах туршлагатай үйлчилгээ хэрэгтэй бол манай серверт нэгдэж илүү дэлгэрэнгүй мэдээллийг аваарай```\n[Нэгдэх](https://www.discord.gg/X3YRdPNSZu)'
-
+        elif category.lower() == "horserace":
+            desc = '```?horserace```\n**Note**:\n```Утсан дээр тоглоход гарах дүрслэлийн алдаа нь Discord-ийн асуудал болно```\n**Тайлбар:**\n```Морь уралдаан дээр бооцоо тавих```\n**Авах утгууд:**\n`?horserace <amount>` – Бооцоо тавих хэмжээ\n\n**Aliases:**\n```hr```\n**Cooldown:**\n```10 seconds```'
+        elif category.lower() == "slots":
+            desc = '```?slots```\n**Тайлбар:**\n```Slots машин```\n**Авах утгууд:**\n`?slots <amount>` – Бооцоо тавих хэмжээ\n\n**Aliases:**\n```slot```\n**Cooldown:**\n```10 seconds```'
+        elif category.lower() == "stranger" or category.lower() == "start" or category.lower() == "leave":
+            desc = '```Talk to strangers```\n**Тайлбар:**\n```Primobot байдаг серверүүдйин аль нэг дурын хэрэглэгчтэй царай төрх харагдахгүйгээр чатлах. Зөвхөн Primobot-ийн dm channel-д үйлчлэх комманд```\n**Авах утгууд:**\n`?start` – Өөр хэн нэг хэрэглэгчтэй холбогдох\n`?leave` – Хэрэглэгчтэй чатлаж байгаа өрөөнөөс гарах\n\n**Aliases:**\n```start, leave```\n**Cooldown:**\n```10 seconds```'
         embed = discord.Embed(
                 title='Комманд зааварчилгаа:',
                 description=desc,

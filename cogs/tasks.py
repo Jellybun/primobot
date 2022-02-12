@@ -37,9 +37,11 @@ class Tasks(commands.Cog):
                 boosters.append(obj.id)
 
             if ctx.author.id in boosters:
-                amount = 2500
+                amount = 2000
+                desc = f"**{ctx.author.name}**! Та өнөөдрийн daily reward-аа авч танд **{1000}{coinimg}** болон сервер boost-ийн **{1000}{coinimg}** coins нэмэгдэж орлоо"
             else:
                 amount = 1000
+                desc = f"**{ctx.author.name}**! Та өнөөдрийн daily reward-аа авч танд **{amount}{coinimg}** coins нэмэгдэж орлоо"
             newbal = oldbal + amount
             status = {
                 "$set": {
@@ -48,7 +50,7 @@ class Tasks(commands.Cog):
                 }
             }
             await collectionProfile.update_one(profile, status)
-            await ctx.send(f"**{ctx.author.name}**! Та өнөөдрийн daily reward-аа авч танд **{amount}{coinimg}** coins нэмэгдэж орлоо")
+            await ctx.send(desc)
         else:
             await ctx.send(f"**{ctx.author.name}**! Та нэг өдөрт нэг л удаа daily reward авч болно")
             return

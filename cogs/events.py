@@ -12,6 +12,7 @@ client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Li
 db = client_user['Discord']
 collectionProfile = db['Profile']
 collectionServers = db['Servers']
+collectionChats = db['Chats']
 blank = "<:blank:835155831074455622>"
 inv = "<:inv:864984624052305961>"
 
@@ -48,19 +49,11 @@ class Events(commands.Cog):
                 }
             }
             await collectionProfile.insert_one(status)
-        with open("importcommands.json", "r") as f:
-            data = json.load(f)
-        profile = await collectionServers.find_one({"guildId": message.guild.id})
-        prefix = profile['prefix']
-        if message.content.lower().startswith(f"{prefix}") and str(message.guild.id) in data:
-            commands = [key for key in data[str(message.guild.id)]]
-            seekingmsg = message.content[1:].lower()
-            if seekingmsg in clientcommands:
-                return
-            elif seekingmsg in commands:
-                response = data[str(message.guild.id)][str(seekingmsg)]
-                await message.channel.send(response)
-                return
+            
+    @commands.Cog.listener('on_message')
+    async def xpsystem(self, message):
+        if message.author.bot or message.guild == None:
+            return
         member = message.author
         bucket = self.cd_mapping.get_bucket(message)
         retry_after = bucket.update_rate_limit()
@@ -99,6 +92,36 @@ class Events(commands.Cog):
             }
             await collectionProfile.update_one(profile, status)
 
+    @commands.Cog.listener("on_message")
+    async def chat(self, message):
+        if message.author.bot:
+            return
+        if message.channel == message.author.dm_channel:
+            if await collectionChats.count_documents({"userId": message.author.id}) == 0:
+                await message.channel.send('Танд тусламж хэрэгтэй бол **Primoverse** серверийн #help гэсэн channel дээрээс хэрэгтэй зүйлээ бичээрэй')
+                return
+            else:
+                profile = await collectionChats.find_one({"userId": message.author.id})
+                partner = self.client.get_user(profile['partner'])
+                await partner.send(f"**Stranger**:\n{message.content}")
+
+    @commands.Cog.listener("on_message")
+    async def commandimporting(self, message):
+        if message.author.bot or message.guild == None:
+            return
+        with open("importcommands.json", "r") as f:
+            data = json.load(f)
+        profile = await collectionServers.find_one({"guildId": message.guild.id})
+        prefix = profile['prefix']
+        if message.content.lower().startswith(f"{prefix}") and str(message.guild.id) in data:
+            commands = [key for key in data[str(message.guild.id)]]
+            seekingmsg = message.content[1:].lower()
+            if seekingmsg in clientcommands:
+                return
+            elif seekingmsg in commands:
+                response = data[str(message.guild.id)][str(seekingmsg)]
+                await message.channel.send(response)
+                return
 
 
     @commands.Cog.listener()

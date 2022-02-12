@@ -1,7 +1,15 @@
+import ctypes
 import discord
 import random
 import asyncio
+import motor.motor_asyncio
 from discord.ext import commands
+
+client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+db = client_user['Discord']
+collectionProfile = db['Profile']
+collectionChats = db['Chats']
+
 blank = "<:blank:835155831074455622>"
 inv = "\u200b \u200b"
 imgcoin = '<:coin:933027999299809380>'
@@ -28,11 +36,77 @@ class Helpcommand(commands.Cog):
         await jelly.send(f"{ctx.author.mention} pokes {member.mention}\n> {msg}")
         await ctx.message.delete()
 
+    @commands.command()
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def start(self, ctx):
+        if ctx.channel == ctx.author.dm_channel:
+            if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
+                isChatting = False
+            else:
+                isChatting = True
+            if isChatting:
+                await ctx.send("Алдаа!, Та өрөөнөөс гарч байж дахин өөр хэрэглэгчтэй холбогдох боломжтой")
+                return
+            else:
+                waitingroom = await collectionChats.find_one({"room": "waitingroom"})
+                users = waitingroom['users']
+                if ctx.author.id not in users:
+                    users.append(ctx.author.id)
+                    status = {"$set": {"users": users}}
+                    await collectionChats.update_one(waitingroom, status)
+                    await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
+                    while True:
+                        partner = waitingroom['users'][0]
+                        if partner == ctx.author.id:
+                            pass
+                        elif partner != ctx.author.id and await collectionChats.count_documents({"userId": partner}) == 0 and await collectionChats.count_documents({"userId": ctx.author.id, "partner": partner}) == 0:
+                            users.remove(ctx.author.id)
+                            await collectionChats.insert_one({"userId": ctx.author.id, "partner": partner})
+                            await collectionChats.insert_one({"userId": partner, "partner": ctx.author.id})
+                            await ctx.send("Xэрэглэгч тантай холбогдлоо. Таны бичсэн зүйлс тухайн хэрэглэгчид bot dm message-ээр очих болно.")
+                            break
+                        else:
+                            print("Some weird stuff")
+                else:
+                    await ctx.send("Та хүлээлгийн өрөөн дотор орсон байна!. Өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
+                    return
+        else:
+            await ctx.send(f"**{ctx.author.name}!**, Тухайн комманд нь зөвхөн **Primobot**-ийн dm channel-д ашиглагдах комманд болно\nТа `?help leave` гэж бичин дэлгэрэнгүй мэдээлэл авна уу")
+            return
+
+    @commands.command()
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def leave(self, ctx):
+        if ctx.channel == ctx.author.dm_channel:
+            if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
+                isChatting = False
+            else:
+                isChatting = True
+            if isChatting:
+                profile = await collectionChats.find_one({"userId": ctx.author.id})
+                partnerpfp = await collectionChats.find_one({"userId": profile['partner']})
+                partner = self.client.get_user(profile['partner'])
+                await collectionChats.delete_one(profile)
+                await collectionChats.delete_one(partnerpfp)
+                await ctx.send("Таныг тухайн хэрэглэгчээс амжилттай салгалаа. Дахин өөр хэрэглэгчтэй холбогдохыг хүсвэл `?start` гэж бичнэ үү.")
+                await partner.send("Тантай холбогдсон хэрэглэгч өрөөнөөс гарлаа(leave). Дахин өөр хэрэглэгчтэй холбогдохыг хүсвэл `?start` гэж бичнэ үү.")
+            else:
+                await ctx.send("Та зөвхөн өөр хэрэглэгчтэй чатлаж байгаа үед leave хийх боломжтой")
+                return
+        else:
+            await ctx.send(f"**{ctx.author.name}!**, Тухайн комманд нь зөвхөн **Primobot**-ийн dm channel-д ашиглагдах комманд болно\nТа `?help start` гэж бичин дэлгэрэнгүй мэдээлэл авна уу")
+            return
+
     @commands.command(aliases=['hr'])
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def horserace(self, ctx, bet: int=None):
+        profile = collectionProfile.find_one({"userId": ctx.author.id})
+        cash = profile['profile']['coin'][1]
         if bet is None:
             bet = 1
+        if bet < 0 or cash < bet:
+            await ctx.send(f"**{ctx.author.name}!**, Таны үлдэгдэл хүрэлцэхгүй байна!")
+            return
         status = {
                 "0": {"horse": "<a:horse_green:941686663111913552>", "pts": 0},
                 "1": {"horse": "<a:horse_orange:941686662784762036>", "pts": 0},
@@ -49,7 +123,7 @@ class Helpcommand(commands.Cog):
         msg = await ctx.send(embed=embed)
         def check(m):
                 return m.content.lower() in ["1", "2", "3", "4", "5", "6", "7"] and m.channel == ctx.channel
-        await ctx.send("`Бооцоо тавих морио сонгоно уу`\n__1, 2, 3, 4, 5, 6, 7__")
+        await ctx.send("`Бооцоо тавих морио сонгоно уу`\n#1<a:horse_green:941686663111913552>, #2<a:horse_orange:941686662784762036>, #3<a:horse_white:941686662252089354>, #4<a:horse_blue:941686661748785162>, #5<a:horse_red:941686663061590096>, #6<a:horse_purple:941686662046576680>, #7<a:horse_yellow:941686661937504277>")
         try:
             message = await self.client.wait_for('message', check=check, timeout=20)
         except asyncio.TimeoutError:
@@ -84,11 +158,19 @@ class Helpcommand(commands.Cog):
                 embed3 = discord.Embed(title=f"{ctx.author.name} bet {bet} coins on horse race!", description=f"`Таны сонгосон морь:` {userhorse}\n\n{inv*status['0']['pts']}<a:horse_green:941686663111913552>{inv*(limit-status['0']['pts'])}🏁\n{inv*status['1']['pts']}<a:horse_orange:941686662784762036>{inv*(limit-status['1']['pts'])}🏁\n{inv*status['2']['pts']}<a:horse_white:941686662252089354>{inv*(limit-status['2']['pts'])}🏁\n{inv*status['3']['pts']}<a:horse_blue:941686661748785162>{inv*(limit-status['3']['pts'])}🏁\n{inv*status['4']['pts']}<a:horse_red:941686663061590096>{inv*(limit-status['4']['pts'])}🏁\n{inv*status['5']['pts']}<a:horse_purple:941686662046576680>{inv*(limit-status['5']['pts'])}🏁\n{inv*status['6']['pts']}<a:horse_yellow:941686661937504277>{inv*(limit-status['6']['pts'])}🏁", color=16777215)
                 await msg.edit(embed=embed3)
                 if len(winners) == 7:
+                    index = 1
                     if winners[0] == userhorse:
                         titlemsg = f"{ctx.author.name} won {bet*10} coins on horse race!"
                         color = 65280
+                        bank = profile['profile']['coin'][0]
+                        bal = cash+(bet*10)
+                        status = {
+                            "$set": {
+                                "profile.coin": [bank, bal]
+                            }
+                        }
+                        await collectionProfile.update_one(profile, status)
                     else:
-                        index = 1
                         for item in winners:
                             if item != userhorse:
                                 index += 1
@@ -96,18 +178,28 @@ class Helpcommand(commands.Cog):
                                 break
                         titlemsg = f"{ctx.author.name} lost {bet} coins on horse race!"
                         color = 16711680
+                        bank = profile['profile']['coin'][0]
+                        bal = cash-bet
+                        status = {
+                            "$set": {
+                                "profile.coin": [bank, bal]
+                            }
+                        }
+                        await collectionProfile.update_one(profile, status)
                     desc = f"{inv*status['0']['pts']}<a:horse_green:941686663111913552>{inv*(limit-status['0']['pts'])}🏁\n{inv*status['1']['pts']}<a:horse_orange:941686662784762036>{inv*(limit-status['1']['pts'])}🏁\n{inv*status['2']['pts']}<a:horse_white:941686662252089354>{inv*(limit-status['2']['pts'])}🏁\n{inv*status['3']['pts']}<a:horse_blue:941686661748785162>{inv*(limit-status['3']['pts'])}🏁\n{inv*status['4']['pts']}<a:horse_red:941686663061590096>{inv*(limit-status['4']['pts'])}🏁\n{inv*status['5']['pts']}<a:horse_purple:941686662046576680>{inv*(limit-status['5']['pts'])}🏁\n{inv*status['6']['pts']}<a:horse_yellow:941686661937504277>{inv*(limit-status['6']['pts'])}🏁"
                     embedlast = discord.Embed(title=titlemsg, description=f"`Таны сонгосон морь:` {userhorse} **|** `Эзэлсэн байр:` **{index}**\n\n{desc}", color=color)
                     await msg.edit(embed=embedlast)
                     break
 
     @commands.command(aliases=['slots'])
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     async def slot(self, ctx, amount: int=None):
+        profile = collectionProfile.find_one({"userId": ctx.author.id})
+        cash = profile['profile']['coin'][1]
         if amount is None:
             amount = 1
-        if amount < 0:
-            await ctx.send(f"**{ctx.author.name}!**, Оруулах хэмжээ **0**-ээс бага байж болохгүй!")
+        if cash < amount or amount < 0:
+            await ctx.send(f"**{ctx.author.name}!**, Таны үлдэгдэл хүрэлцэхгүй байна!")
             return
         desc = f"\u2800 <a:slots:941291012410728460> | <a:slots:941291012410728460> | <a:slots:941291012410728460> \u2800"
         embed = discord.Embed(title=f"{ctx.author.name} bet {amount}{imgcoin} coins!", description=desc, color=16776960)
@@ -120,14 +212,38 @@ class Helpcommand(commands.Cog):
             color = 65280
             prize = slotMapping[which]
             titlemsg = f"{ctx.author.name} won {prize*amount}{imgcoin} coins!"
+            bank = profile['profile']['coin'][0]
+            bal = cash+(prize*amount)
+            status = {
+                "$set": {
+                    "profile.coin": [bank, bal]
+                }
+            }
+            await collectionProfile.update_one(profile, status)
         else:
             result = (random.choice(slotChoices), random.choice(slotChoices), random.choice(slotChoices))
             color = 16711680
-            if result[0] == result[1] == result[2]:
+            if result[0] == result[1] and result[0] == result[2]:
                 prize = slotMapping(result[0])
                 titlemsg = f"{ctx.author.name} won {prize*amount}{imgcoin} coins!"
+                bank = profile['profile']['coin'][0]
+                bal = cash+(prize*amount)
+                status = {
+                    "$set": {
+                        "profile.coin": [bank, bal]
+                    }
+                }
+                await collectionProfile.update_one(profile, status)
             else:
                 titlemsg = f"{ctx.author.name} lost {amount}{imgcoin} coins!"
+                bank = profile['profile']['coin'][0]
+                bal = cash-amount
+                status = {
+                    "$set": {
+                        "profile.coin": [bank, bal]
+                    }
+                }
+                await collectionProfile.update_one(profile, status)
         await asyncio.sleep(1)
         embed1 = discord.Embed(title=f"{ctx.author.name} bet {amount}{imgcoin} coins!", description=f"**\u2800 {result[0]} | <a:slots:941291012410728460> | <a:slots:941291012410728460> \u2800**", color=16776960)
         embed1.set_thumbnail(url=ctx.author.avatar_url)
