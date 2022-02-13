@@ -90,10 +90,10 @@ class Fun(commands.Cog):
     @commands.command(aliases=['hr'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def horserace(self, ctx, bet: int=None):
-        profile = await collectionProfile.find_one({"userId": ctx.author.id})
-        cash = profile['profile']['coin'][1]
         if bet is None:
             bet = 1
+        profile = await collectionProfile.find_one({"userId": ctx.author.id})
+        cash = profile['profile']['coin'][1]
         if bet < 0 or cash < bet:
             await ctx.send(f"**{ctx.author.name}!**, Таны үлдэгдэл хүрэлцэхгүй байна!")
             return
@@ -122,6 +122,7 @@ class Fun(commands.Cog):
             return
         else:
             userhorse = status[str(int(message.content)-1)]['horse']
+            await message.delete()
             embed2 = discord.Embed(title=f"{ctx.author.name} bet {bet} coins on horse race!", description=f"`Таны сонгосон морь:` {str(userhorse)}\n\n<a:horse_green:941686663111913552>{inv*limit}🏁\n<a:horse_orange:941686662784762036>{inv*limit}🏁\n<a:horse_white:941686662252089354>{inv*limit}🏁\n<a:horse_blue:941686661748785162>{inv*limit}🏁\n<a:horse_red:941686663061590096>{inv*limit}🏁\n<a:horse_purple:941686662046576680>{inv*limit}🏁\n<a:horse_yellow:941686661937504277>{inv*limit}🏁", color=16777215)
             await msg.edit(embed=embed2)
             while True:
@@ -171,10 +172,10 @@ class Fun(commands.Cog):
     @commands.command(aliases=['slots'])
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def slot(self, ctx, amount: int=None):
-        profile = await collectionProfile.find_one({"userId": ctx.author.id})
-        cash = profile['profile']['coin'][1]
         if amount is None:
             amount = 1
+        profile = await collectionProfile.find_one({"userId": ctx.author.id})
+        cash = profile['profile']['coin'][1]
         if cash < amount or amount < 0:
             await ctx.send(f"**{ctx.author.name}!**, Таны үлдэгдэл хүрэлцэхгүй байна!")
             return
@@ -233,6 +234,51 @@ class Fun(commands.Cog):
         embed3 = discord.Embed(title=titlemsg, description=f" **\u2800 {result[0]} | {result[1]} | {result[2]} \u2800**", color=color)
         embed3.set_thumbnail(url=ctx.author.avatar_url)
         await msg.edit(embed=embed3)
+
+    @commands.command(aliases=['cf'])
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    async def coinflip(self, ctx, side: str, bet: int=None):
+        if bet is None:
+            bet = 1
+        profile = await collectionProfile.find_one({"userId": ctx.author.id})
+        cash = profile['profile']['coin'][1]
+        if cash < bet or bet < 0:
+            await ctx.send(f"**{ctx.author.name}!**, Таны үлдэгдэл хүрэлцэхгүй байна!")
+            return
+        embed = discord.Embed(title=f"{ctx.author.name} зоос шидлээ", color=16777215)
+        embed.set_image(url='https://cdn.discordapp.com/attachments/832245157889441855/942379170485403668/ezgif.com-gif-maker_2.gif')
+        a = await ctx.send(embed=embed)
+        if side.lower() in ['head', 'h', 'heads']:
+            choice = 'https://cdn.discordapp.com/attachments/832245157889441855/942379581216788520/ezgif.com-gif-maker.png'
+        elif side.lower() in ['tail', 't', 'tails']:
+            choice = 'https://cdn.discordapp.com/attachments/832245157889441855/942379883735171073/ezgif.com-gif-maker_1.png'
+        result = random.choice(['https://cdn.discordapp.com/attachments/832245157889441855/942379581216788520/ezgif.com-gif-maker.png', 'https://cdn.discordapp.com/attachments/832245157889441855/942379883735171073/ezgif.com-gif-maker_1.png'])
+        if result == choice:
+            msg = f"{ctx.author.name} {bet} coins хожлоо"
+            color = 65280
+            bank = profile['profile']['coin'][0]
+            bal = cash+(bet*2)
+            document = {
+                "$set": {
+                    "profile.coin": [bank, bal]
+                }
+            }
+            await collectionProfile.update_one(profile, document)
+        else:
+            msg = f"{ctx.author.name} {bet} coins алдлаа"
+            color = 16711680
+            bank = profile['profile']['coin'][0]
+            bal = cash-bet
+            document = {
+                "$set": {
+                    "profile.coin": [bank, bal]
+                }
+            }
+            await collectionProfile.update_one(profile, document)
+        embed2 = discord.Embed(title=msg, color=color)
+        embed2.set_image(url=result)
+        await asyncio.sleep(1)
+        await a.edit(embed=embed2)
         
         
 
