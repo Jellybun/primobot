@@ -2,6 +2,7 @@ import discord
 import asyncio
 import json
 import datetime
+import aiohttp
 import asyncio
 from typing import Union
 from discord.ext import commands
@@ -74,6 +75,61 @@ class Moderating(commands.Cog):
             await ctx.send(f'**{member.name}** has been warned!')  
         else:
             await ctx.send(f'**{member.name}** has been warned for __{reason}__ reason!')  
+
+    @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.has_permissions(manage_messages = True)
+    async def postaswebhook(self, ctx, url: str, channel: discord.TextChannel, *, text=None):
+        if text is None:
+            await ctx.send("Та message контентийг оруулж өгнө үү!")
+            return
+        else:
+            new_url = url[30:]
+            index = 0
+            webhook_id = ''
+            webhook_token = ''
+            for letter in new_url:
+                if letter == '/':
+                    index += 1
+                elif index == 1:
+                    webhook_id += letter
+                elif index == 2:
+                    webhook_token += letter
+            async with aiohttp.ClientSession() as session:
+                webhook = discord.Webhook.partial(
+                    webhook_id,
+                    webhook_token,
+                    adapter=discord.AsyncWebhookAdapter(session)
+                )  
+                if text.startswith("{"):
+                    try:
+                        firstjson = json.loads(text)
+                        rawJson = firstjson['embeds'][0]
+                        embed = discord.Embed.from_dict(rawJson)
+                    except:
+                        await ctx.send("Json текстийг хөрвүүлэхэд алдаа гарлаа")
+                        return
+                    else:
+                        await ctx.message.delete()
+                        try:
+                            await webhook.send(embed=embed)
+                        except:
+                            await ctx.send("**Алдаа гарлаа**!, Post хийх channel-ийн webhook url зөв эсэхийг дахин шалгана уу")
+                        else:
+                            msg = await ctx.send(f"**{channel.name}** дотор амжилттай webhook-ээр embed-post хийлээ!")
+                            await asyncio.sleep(3)
+                            await msg.delete()
+                    
+                else:
+                    await ctx.message.delete()
+                    try:
+                        await webhook.send(text)
+                    except:
+                        await ctx.send("**Алдаа гарлаа**!, Post хийх channel-ийн webhook url зөв эсэхийг дахин шалгана уу")
+                    else:
+                        msg = await ctx.send(f"**{channel.name}** дотор амжилттай webhook-ээр post хийлээ!")
+                        await asyncio.sleep(3)
+                        await msg.delete()
         
     
     @commands.command()

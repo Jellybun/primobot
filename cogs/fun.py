@@ -189,7 +189,7 @@ class Fun(commands.Cog):
             result = (which, which, which)
             color = 65280
             prize = slotMapping[which]
-            titlemsg = f"{ctx.author.name} won {prize*amount}{imgcoin} coins!"
+            titlemsg = f"{ctx.author.name} {prize*amount}{imgcoin} coin хожлоо!"
             bank = profile['profile']['coin'][0]
             bal = cash+(prize*amount)
             status = {
@@ -203,7 +203,7 @@ class Fun(commands.Cog):
             color = 16711680
             if result[0] == result[1] and result[0] == result[2]:
                 prize = slotMapping(result[0])
-                titlemsg = f"{ctx.author.name} won {prize*amount}{imgcoin} coins!"
+                titlemsg = f"{ctx.author.name} {prize*amount}{imgcoin} coin хожлоо!"
                 bank = profile['profile']['coin'][0]
                 bal = cash+(prize*amount)
                 status = {
@@ -213,7 +213,7 @@ class Fun(commands.Cog):
                 }
                 await collectionProfile.update_one(profile, status)
             else:
-                titlemsg = f"{ctx.author.name} lost {amount}{imgcoin} coins!"
+                titlemsg = f"{ctx.author.name} {amount}{imgcoin} coin алдлаа!"
                 bank = profile['profile']['coin'][0]
                 bal = cash-amount
                 status = {
