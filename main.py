@@ -26,7 +26,7 @@ async def get_prefix(client, message):
     prefix = server["prefix"]
     return prefix, "?"   
 
-client = commands.Bot(command_prefix = "?", activity=discord.Game("?help"), intents = discord.Intents.all())
+client = commands.Bot(command_prefix = get_prefix, activity=discord.Game("?help"), intents = discord.Intents.all())
 client.remove_command('help')
 
 @client.command()

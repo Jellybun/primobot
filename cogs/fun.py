@@ -234,52 +234,6 @@ class Fun(commands.Cog):
         embed3 = discord.Embed(title=titlemsg, description=f" **\u2800 {result[0]} | {result[1]} | {result[2]} \u2800**", color=color)
         embed3.set_thumbnail(url=ctx.author.avatar_url)
         await msg.edit(embed=embed3)
-
-    @commands.command(aliases=['cf'])
-    @commands.cooldown(1, 10, commands.BucketType.user)
-    async def coinflip(self, ctx, side: str, bet: int=None):
-        if bet is None:
-            bet = 1
-        profile = await collectionProfile.find_one({"userId": ctx.author.id})
-        cash = profile['profile']['coin'][1]
-        if cash < bet or bet < 0:
-            await ctx.send(f"**{ctx.author.name}!**, Таны үлдэгдэл хүрэлцэхгүй байна!")
-            return
-        embed = discord.Embed(title=f"{ctx.author.name} зоос шидлээ", color=16777215)
-        embed.set_image(url='https://cdn.discordapp.com/attachments/832245157889441855/942379170485403668/ezgif.com-gif-maker_2.gif')
-        a = await ctx.send(embed=embed)
-        if side.lower() in ['head', 'h', 'heads']:
-            choice = 'https://cdn.discordapp.com/attachments/832245157889441855/942379581216788520/ezgif.com-gif-maker.png'
-        elif side.lower() in ['tail', 't', 'tails']:
-            choice = 'https://cdn.discordapp.com/attachments/832245157889441855/942379883735171073/ezgif.com-gif-maker_1.png'
-        result = random.choice(['https://cdn.discordapp.com/attachments/832245157889441855/942379581216788520/ezgif.com-gif-maker.png', 'https://cdn.discordapp.com/attachments/832245157889441855/942379883735171073/ezgif.com-gif-maker_1.png'])
-        if result == choice:
-            msg = f"{ctx.author.name} {bet} coins хожлоо"
-            color = 65280
-            bank = profile['profile']['coin'][0]
-            bal = cash+(bet*2)
-            document = {
-                "$set": {
-                    "profile.coin": [bank, bal]
-                }
-            }
-            await collectionProfile.update_one(profile, document)
-        else:
-            msg = f"{ctx.author.name} {bet} coins алдлаа"
-            color = 16711680
-            bank = profile['profile']['coin'][0]
-            bal = cash-bet
-            document = {
-                "$set": {
-                    "profile.coin": [bank, bal]
-                }
-            }
-            await collectionProfile.update_one(profile, document)
-        embed2 = discord.Embed(title=msg, color=color)
-        embed2.set_image(url=result)
-        await asyncio.sleep(1)
-        await a.edit(embed=embed2)
-        
         
 
     @commands.command()

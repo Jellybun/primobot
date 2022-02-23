@@ -201,7 +201,7 @@ class Helpcommand(commands.Cog):
         profile = await collectionProfile.find_one({"userId": ctx.author.id})
         bank = profile['profile']['coin'][0]
         bal = profile['profile']['coin'][1]
-        embed = discord.Embed(title=f"{ctx.author.name}-ийн үлдэгдэл:", description='Банкний хадгаламж дээр өдөр тутамд +__3%__-ийн хүү нэмэгдэнэ',color=16777215)
+        embed = discord.Embed(title=f"{ctx.author.name}-ийн үлдэгдэл:", description='`Банкний хадгаламж дээр өдөр тутамд +__3%__-ийн хүү нэмэгдэнэ`',color=16777215)
         embed.add_field(name="Bank:", value=f"```{bank}```", inline=True)
         embed.add_field(name="Wallet:", value=f"```{bal}```", inline=True)
         embed.set_thumbnail(url=ctx.author.avatar_url)

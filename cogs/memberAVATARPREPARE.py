@@ -21,29 +21,26 @@ class Membersetting(commands.Cog):
         self.client = client            
 
     @staticmethod
-    def processing(avatar_bytes: bytes, name: str, level: int, xp: int, rank: str, about: str) -> BytesIO:
+    def processing(avatar_bytes: bytes, name: str, level: int, xp: int, rank: str) -> BytesIO:
         requiredxp = level**3 + 1000
         footer = f"{xp}/{requiredxp}"
-        size = int(1480*(xp/requiredxp))
+        size = int(450*(xp/requiredxp))
         with Image.open(BytesIO(avatar_bytes)) as pfp:
             buffer = BytesIO()
-            premainbar = Image.open("images/progressbar.png")
+            premainbar = Image.open("images/bar.png")
             background = Image.open('images/background.png')
-            xpBar = premainbar.resize((size, 103))
-            pfp = pfp.resize((422, 422))
+            xpBar = premainbar.resize((size, 30))
+            pfp = pfp.resize((75, 75))
 
-            background.paste(pfp, (84, 62))
-            background.paste(xpBar, (88, 716))
+            background.paste(pfp, (14, 15))
+            background.paste(xpBar, (27, 140))
 
             draw = ImageDraw.Draw(background)
-            size1 = ImageFont.truetype("quicksand.ttf", 150)
-            size2 = ImageFont.truetype("quicksand.ttf", 96)
+            size2 = ImageFont.truetype("quicksand.ttf", 30)
 
-            draw.text((355, 574), str(level), (0, 0, 0), font=size2)
-            draw.text((945, 574), str(rank), (0, 0, 0), font=size2)
-            draw.text((565, 45), str(name), (0, 0, 0), font=size1)
-            draw.text((1150, 810), str(footer), (0, 0, 0), font=size2)
-            draw.text((645, 213), str(about), (0, 0, 0), font=size2)
+            draw.text((16, 102), f'Level: {level}         Rank: {rank}', (255, 255, 255), font=size2)
+            draw.text((115, 10), str(name), (255, 255, 255), font=size2)
+            draw.text((330, 170), str(footer), (255, 255, 255), font=size2)
             background.save(buffer, "png")
             buffer.seek(0)
             
@@ -61,7 +58,6 @@ class Membersetting(commands.Cog):
                 name = ctx.author.name
                 level = profile['servers'][str(ctx.guild.id)]['level']
                 xp = profile['servers'][str(ctx.guild.id)]['xp']
-                about = profile['profile']['about']
                 dex = 1
                 async for pro in collectionProfile.find().sort(f"servers.{str(ctx.guild.id)}.level", -1):
                     if pro['userId'] == int(ctx.author.id):
@@ -70,7 +66,7 @@ class Membersetting(commands.Cog):
                     else:
                         dex += 1
                         pass
-                fn = partial(self.processing, pfp, name, level, xp, rank, about)
+                fn = partial(self.processing, pfp, name, level, xp, rank)
                 final_buffer = await self.client.loop.run_in_executor(None, fn)
                 file = discord.File(filename='test.png', fp=final_buffer)
                 await ctx.send(file=file)

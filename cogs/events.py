@@ -1,3 +1,4 @@
+from re import A
 import discord
 import pymongo
 import json
@@ -58,7 +59,7 @@ class Events(commands.Cog):
         bucket = self.cd_mapping.get_bucket(message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
-            pass
+            return
         else:
             profile = await collectionProfile.find_one({"userId": member.id})
             if str(message.guild.id) not in list(profile["servers"].keys()):
@@ -131,6 +132,45 @@ class Events(commands.Cog):
     async def on_member_join(self, member):
         if member.bot:
             return
+        welcome = await collectionServers.find_one({"guildId": member.guild.id})['welcome']
+        oldHour = datetime.datetime.now(datetime.timezone.utc).strftime("%H")
+        now = datetime.datetime.now(datetime.timezone.utc)
+        newHour = int(oldHour) + 8
+        if newHour >= 24:
+            newHour = int(newHour - 24)
+        new = str(now.replace(hour=newHour, microsecond=0))[:-6]
+        raw_json = json.loads(welcome['embed'])
+        desc = raw_json['description']
+        dict_final = desc.format(member=member.mention, member_count=member.guild.member_count)
+        raw_json['description'] = dict_final
+        embed = discord.Embed.from_dict(raw_json)
+        embed.set_footer(text=new)
+        
+        if welcome['webhook'] is None:
+            welcome_channel = self.client.get_channel(int(welcome['channel']))
+            await welcome_channel.send(embed=embed)
+        else:
+            new_url = welcome['webhook'][30:]
+            index = 0
+            webhook_id = ''
+            webhook_token = ''
+            for letter in new_url:
+                if letter == '/':
+                    index += 1
+                elif index == 1:
+                    webhook_id += letter
+                elif index == 2:
+                    webhook_token += letter
+        async with aiohttp.ClientSession() as session:
+            webhook = discord.Webhook.partial(
+                webhook_id,
+                webhook_token,
+                adapter=discord.AsyncWebhookAdapter(session)
+            )              
+            await webhook.send(embed=embed)
+    
+    @commands.Cog.listener("on_member_join")
+    async def profilecreaterformember(self, member):
         if await collectionProfile.count_documents({"userId": member.id}) == 0:
             status = {
                 "userId": member.id,
@@ -152,26 +192,6 @@ class Events(commands.Cog):
                 }
             }
             await collectionProfile.insert_one(status)
-        if member.guild.id != 906153176414183475:
-            return
-        async with aiohttp.ClientSession() as session:
-            webhook = discord.Webhook.partial(
-                '939029007524057098',
-                'H5XEI8N8kgB5oO3gthyT4BfzDgeEY-JihIXPRfphwo7qAWxffTobmEzOZIaZg-DloRtu',
-                adapter=discord.AsyncWebhookAdapter(session)
-            )  
-            oldHour = datetime.datetime.now(datetime.timezone.utc).strftime("%H")
-            now = datetime.datetime.now(datetime.timezone.utc)
-            newHour = int(oldHour) + 8
-            if newHour >= 24:
-                newHour = int(newHour - 24)
-            new = now.replace(hour=newHour, microsecond=0)
-            aboutus = self.client.get_channel(936253768633307166)
-            embed = discord.Embed(description=f'Welcome to our server! {member.mention}\nYou are our **{member.guild.member_count}**th member\nYou can look at {aboutus.mention} channel to get more information about the server', color=16777215)
-            embed.set_image(url='https://cdn.discordapp.com/attachments/832245157889441855/930055311887323206/Screen_Shot_2021-12-30_at_19.22.44.png')
-            embed.set_author(name=member.name, icon_url=member.avatar_url)
-            embed.set_footer(text=new)
-            await webhook.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -182,7 +202,8 @@ class Events(commands.Cog):
                 "prefix": "?",
                 "tags": {},
                 "notes": {},
-                "ga": []
+                "ga": [],
+                "welcome": {'embed': None, 'channel': None, 'webhook': None}
             }
             await collectionServers.insert_one(document)
         else:

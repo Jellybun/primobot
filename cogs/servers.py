@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import datetime
+import json
 import motor.motor_asyncio
 from difflib import get_close_matches
 from discord.ext import commands
@@ -31,13 +32,74 @@ class Botguilds(commands.Cog):
             else:
                 status = {
                     "$set": {
-                        f"servers.{str(ctx.guild.id)}": [level, 0]
+                        f"servers.{str(ctx.guild.id)}": {"id": ctx.guild.id, "level": level, "xp": 0}
                     }
                 }
                 await collectionProfile.update_one(profile, status)
-                embed = discord.Embed(description=f"**{ctx.author.name}**! Хэрэглэгчийн level-ийг амжилттай **{level}** болгож өөрчиллөө!", color=65280)
+                embed = discord.Embed(description=f"**{member.name}** xэрэглэгчийн level-ийг амжилттай **{level}** болгож өөрчиллөө!", color=65280)
                 await ctx.send(embed=embed)
                 return
+
+    @commands.command(aliases=['wlcm', ' welcome'])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.has_permissions(manage_messages =True)
+    async def welcome(self, ctx, define: str, info: str = None, *, content: str = None):
+        guild = await collectionServers.find_one({"guildId": ctx.guild.id})
+        if content is None and info is None and define.lower() == 'status':
+            embed = discord.Embed(
+                title=f'{ctx.guild.name}-ийн welcome message status',
+                description='**Түлхүүр үгc**:\nШинэ гишүүн – `{member}`\nСерверийн гишүүдийн тоо – `{member_count}`\nЖишээ: Сайн байна уу {member}. Та манай {member_count}-дэх гишүүн боллоо = Сайн байна уу **User**. Та манай **1**-дэх гишүүн боллоо\n**Санамж**: Дээрх түлхүүр үгсийг discohook дээрх json-ий зөвхөн __description__ хэсэгт оруулна!',
+                color=16777215
+            )
+            if guild['welcome']['embed'] is None:
+                guild_status = "Идэвхигүй"
+            else:
+                guild_status = 'Идэвхитэй'
+            if guild['welcome']['webhook'] is None:
+                guild_type = 'Primobot'
+                guild_url = '–'
+            else:
+                guild_type = 'Webhook'
+                guild_url = str(guild['welcome']['webhook'])
+            embed.add_field(name='Status:', value=f"```{guild_status}```", inline=True)
+            embed.add_field(name='Channel id:', value=f"```{guild['welcome']['channel']}```", inline=True)
+            embed.add_field(name='Webhook/Bot:', value=f"```{guild_type}```", inline=True)
+            embed.add_field(name='Webhook url:', value=f"```{guild_url}```", inline=False)
+            await ctx.send(embed=embed)
+            return
+        elif content is None and info is None and define.lower() in ['display', 'show']:
+            if len(guild['welcome']) >= 1:
+                embed = discord.Embed.from_dict(guild['welcome'])
+            else:
+                embed = discord.Embed(description=f'**{ctx.author.name}**!, Энэ серверт одоогоор welcome message идэвхижээгүй байна!', color=16711680)
+            await ctx.send(embed=embed)
+            return
+        elif content is None and info is None and define.lower() == 'disable':
+            status = {"$set": {"welcome.embed": None}}
+            await collectionServers.update_one(guild, status) 
+            await ctx.send('Welcome message-ийг амжилттай идэвхгүй болголоо!')
+            return
+        elif define.lower() == 'set' and info.lower() == "message":
+            to_json = json.loads(content)
+            raw_json = to_json['embeds'][0]
+            embed = discord.Embed.from_dict(raw_json)
+            status = {"$set": {"welcome.embed": raw_json}}
+            await collectionServers.update_one(guild, status) 
+            await ctx.send(embed=embed)
+            await ctx.send("Welcome message-ийг амжилттай шинэчлэлээ")
+        elif define.lower() == 'set' and info.lower() == "channel":
+            status = {"$set": {"welcome.channel": int(content)}}
+            await collectionServers.update_one(guild, status)
+            await ctx.send("Welcome message-ийн channel-ийг амжилттай шинэчлэлээ")
+        elif define.lower() == 'set' and info.lower() == "client":
+            if content.lower() == 'bot':
+                status = {"$set": {"welcome.webhook": None}}
+            else:
+                status = {"$set": {"welcome.webhook": str(content)}}
+            await collectionServers.update_one(guild, status)
+            await ctx.send("Welcome message-ийн client-ийг амжилттай шинэчлэлээ")
+             
+
 
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -55,10 +117,10 @@ class Botguilds(commands.Cog):
                 embed = discord.Embed(description="Серверийн датаг шинэчлэж байна<a:loading1:919916989990965248>\nХэрвээ комманд дундаасаа ажиллахаа болисон тохиолдолд та коммандийг дахин ачааллуулнуу!", color=16711680)
                 embed.set_thumbnail(url=self.client.user.avatar_url)
                 msg1 = await ctx.send(embed=embed)
-                async for profile in collectionProfile.find().sort({f"servers.{str(ctx.guild.id)}"}):
+                async for profile in collectionProfile.find({f"servers.{ctx.guild.id}id": ctx.guild.id}):
                     status = {
                         "$set": {
-                            f"servers.{str(ctx.guild.id)}": [0, 0]
+                            f"servers.{str(ctx.guild.id)}": {"id": ctx.guild.id, "level": 0, "xp": 0}
                         }
                     }
                     await collectionProfile.update_one(profile, status)
