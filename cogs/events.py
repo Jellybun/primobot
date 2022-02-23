@@ -144,6 +144,7 @@ class Events(commands.Cog):
         dict_final = desc.format(member=member.mention, member_count=member.guild.member_count)
         raw_json['description'] = dict_final
         embed = discord.Embed.from_dict(raw_json)
+        embed.set_author(name=member.name, icon_url=member.avatar_url)
         embed.set_footer(text=new)
         
         if welcome['webhook'] is None:
@@ -193,6 +194,22 @@ class Events(commands.Cog):
             }
             await collectionProfile.insert_one(status)
 
+    """@commands.command()
+    async def akado(self, ctx):
+        for guild in self.client.guilds:
+            if await collectionServers.count_documents({"guildId": guild.id}) == 0:
+                document = {
+                    "guildId": guild.id,
+                    "prefix": "?",
+                    "tags": {},
+                    "notes": {},
+                    "ga": [],
+                    "welcome": {'embed': None, 'channel': None, 'webhook': None}
+                }
+                await collectionServers.insert_one(document)
+            else:
+                pass
+        await ctx.send('done')"""
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
