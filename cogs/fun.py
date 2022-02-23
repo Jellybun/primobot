@@ -55,15 +55,12 @@ class Fun(commands.Cog):
         if ctx.channel == ctx.author.dm_channel:
             if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
                 profile = await collectionChats.find_one({"room": "room"})
-                print("got the room profile and user is not in current")
                 users = profile['lining']
-                print("got current waitlisint gusers")
                 print(users)
                 if ctx.author.id not in users: 
-                    print("user is not in the waitlist")
                     users = profile['lining'] + [ctx.author.id]
                     print(users)
-                    await collectionChats.update_one(profile, {"$set": {"lining": [1, 2, 3]}})
+                    await collectionChats.update_one(profile, {"$set": {"lining": list(users)}})
                     await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
                 else:
                     await ctx.send("Та хүлээлгийн өрөөн дотор орсон байна!. Өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
