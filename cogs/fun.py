@@ -44,6 +44,12 @@ class Fun(commands.Cog):
         await ctx.send('Done')
 
     @commands.command()
+    async def checker(self, ctx):
+        profile = await collectionChats.find_one({"room": "room"})
+        await ctx.send(profile['lining'])
+        await ctx.send(len(profile['lining']))
+
+    @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def start(self, ctx):
         if ctx.channel == ctx.author.dm_channel:
@@ -57,7 +63,7 @@ class Fun(commands.Cog):
                     print("user is not in the waitlist")
                     users = profile['lining'] + [ctx.author.id]
                     print(users)
-                    await collectionChats.update_one(profile, {"$set": {"lining": users}})
+                    await collectionChats.update_one(profile, {"$set": {"lining": [1, 2, 3]}})
                     await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
                 else:
                     await ctx.send("Та хүлээлгийн өрөөн дотор орсон байна!. Өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
