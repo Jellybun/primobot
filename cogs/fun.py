@@ -13,7 +13,7 @@ collectionChats = db['Chats']
 blank = "<:blank:835155831074455622>"
 inv = "\u200b \u200b"
 imgcoin = '<:coin:933027999299809380>'
-limit = 140
+limit = 100
 
 horses = ['<a:horse_green:941686663111913552>', '<a:horse_orange:941686662784762036>', '<a:horse_white:941686662252089354>', '<a:horse_blue:941686661748785162>', '<a:horse_red:941686663061590096>', '<a:horse_purple:941686662046576680>', '<a:horse_yellow:941686661937504277>']
 slotChoices = ['<:slots_777:941618295168180224>', '<:slots_die:941618534084132874>', '<:slots_money:941617788357865482>', '<:slots_wm:941618733162594334>']
@@ -49,9 +49,14 @@ class Fun(commands.Cog):
         if ctx.channel == ctx.author.dm_channel:
             if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
                 profile = await collectionChats.find_one({"room": "room"})
+                print("got the room profile and user is not in current")
                 users = profile['lining']
+                print("got current waitlisint gusers")
+                print(users)
                 if ctx.author.id not in users: 
+                    print("user is not in the waitlist")
                     users = profile['lining'] + [ctx.author.id]
+                    print(users)
                     await collectionChats.update_one(profile, {"$set": {"lining": users}})
                     await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
                 else:

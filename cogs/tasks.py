@@ -57,7 +57,7 @@ class Tasks(commands.Cog):
             await ctx.send(f"**{ctx.author.name}**! Та нэг өдөрт нэг л удаа daily reward авч болно")
             return
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=60)
     async def quizmo(self):
         profile = await collectionChats.find_one({"room": "room"})
         lining = profile['lining']

@@ -132,14 +132,15 @@ class Events(commands.Cog):
     async def on_member_join(self, member):
         if member.bot:
             return
-        welcome = await collectionServers.find_one({"guildId": member.guild.id})['welcome']
+        guild = await collectionServers.find_one({"guildId": member.guild.id})
+        welcome = guild['welcome']
         oldHour = datetime.datetime.now(datetime.timezone.utc).strftime("%H")
         now = datetime.datetime.now(datetime.timezone.utc)
         newHour = int(oldHour) + 8
         if newHour >= 24:
             newHour = int(newHour - 24)
         new = str(now.replace(hour=newHour, microsecond=0))[:-6]
-        raw_json = json.loads(welcome['embed'])
+        raw_json = welcome['embed']
         desc = raw_json['description']
         dict_final = desc.format(member=member.mention, member_count=member.guild.member_count)
         raw_json['description'] = dict_final
