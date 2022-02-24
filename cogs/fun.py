@@ -32,9 +32,10 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def poke(self, ctx, member : discord.Member = None, *, msg = None):
         jelly = self.client.get_user(759756236996083713)
-        await member.send(f"**Secret stalker**: {msg}")
-        await jelly.send(f"{ctx.author.mention} pokes {member.mention}\n> {msg}")
+        await member.send(f"**Someone**: {msg}")
         await ctx.message.delete()
+        await jelly.send(f"{ctx.author.mention} pokes {member.mention}\n> {msg}")
+        
 
  
   
@@ -56,10 +57,8 @@ class Fun(commands.Cog):
             if await collectionChats.count_documents({"userId": ctx.author.id}) == 0:
                 profile = await collectionChats.find_one({"room": "room"})
                 users = profile['lining']
-                print(users)
                 if ctx.author.id not in users: 
                     users = profile['lining'] + [ctx.author.id]
-                    print(users)
                     await collectionChats.update_one(profile, {"$set": {"lining": list(users)}})
                     await ctx.send("Таны хүсэлтийг амжилттай хүлээн авлаа, өөр хэрэглэгч орж иртэл түр хүлээнэ үү")
                 else:

@@ -48,7 +48,7 @@ class Botguilds(commands.Cog):
         if content is None and info is None and define.lower() == 'status':
             embed = discord.Embed(
                 title=f'{ctx.guild.name} серверийн welcome message status',
-                description='**Түлхүүр үгc**:\nШинэ гишүүн – `{member}`\nСерверийн гишүүдийн тоо – `{member_count}`\nЖишээ: Сайн байна уу {member}. Та манай {member_count}-дэх гишүүн боллоо = Сайн байна уу **User**. Та манай **1**-дэх гишүүн боллоо\n**Санамж**: Дээрх түлхүүр үгсийг discohook дээрх json-ий зөвхөн __description__ хэсэгт оруулна!',
+                description='**Түлхүүр үгc**:\nШинэ гишүүн – `{member}`\nСерверийн гишүүдийн тоо – `{member_count}`\n**Жишээ:**\n`Сайн байна уу {member}. Та манай {member_count}-дэх гишүүн боллоо` = `Сайн байна уу User. Та манай 1-дэх гишүүн боллоо`\n**Санамж**: Дээрх түлхүүр үгсийг discohook дээрх json-ий зөвхөн __description__ хэсэгт оруулна!',
                 color=16777215
             )
             if guild['welcome']['embed'] is None:
