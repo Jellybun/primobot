@@ -22,7 +22,7 @@ class Primoverse(commands.Cog):
     @commands.command(aliases=['server', 'join'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def invite(self, ctx):
-        embed = discord.Embed(description="[Серверт Primobot нэмэх](https://discord.com/oauth2/authorize?client_id=921045182672166942&permissions=1120383007990&scope=bot)\nPrimoverse [Серверт нэгдэх](https://discord.gg/pGRbjMcvST)", color=3447003)
+        embed = discord.Embed(description="[Primobot cерверт нэмэх](https://discord.com/oauth2/authorize?client_id=921045182672166942&permissions=1120383007990&scope=bot)\n\n[Primoverse cерверт нэгдэх](https://discord.gg/pGRbjMcvST)", color=3447003)
         embed.set_thumbnail(url=self.client.user.avatar_url)
         await ctx.send(embed=embed)
     @commands.command()
