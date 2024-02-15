@@ -11,7 +11,7 @@ from discord.ext import commands, tasks
 from difflib import get_close_matches
 userBlackList = []
 
-client_user = motor.motor_asyncio.AsyncIOMotorClient("mongodb+srv://lilybrown:Lilybrown.0001@cluster0.ccjaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client_user = motor.motor_asyncio.AsyncIOMotorClient(...)
 db = client_user['Discord']
 collectionServers = db['Servers']
 collectionProfile = db['Profile']
